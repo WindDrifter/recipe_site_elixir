@@ -3,9 +3,8 @@ defmodule Recipebook.Account.Follow do
   import Ecto.Changeset
 
   schema "follows" do
-    field :user, :id
-    field :follow, :id
-
+    belongs_to :user, Recipebook.Account.User
+    belongs_to :follow, Recipebook.Account.User
     timestamps()
   end
 

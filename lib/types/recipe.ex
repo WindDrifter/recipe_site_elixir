@@ -8,7 +8,7 @@ defmodule RecipebookWeb.Types.Recipe do
   end
 
   object :ingredient do
-    field :food, :string
+    field :food_name, :string
     field :quantity, :interger
   end
 

@@ -5,31 +5,26 @@ defmodule Recipebook.Support.UserSupport do
       Account.create_user(%{
         name: "test user #{n}",
         email: Faker.Internet.email(),
-        preference: %{
-          likes_emails: true,
-          likes_phone_calls: true
-        }
-      })
-    end
-    for n <- 4..6 do
-      Account.create_user(%{
-        name: "test user #{n}",
-        email: Faker.Internet.email(),
-        preference: %{
-          likes_emails: false,
-          likes_phone_calls: false
-        }
+        username: Faker.Internet.user_name(),
+        password: "123456"
       })
     end
   end
   def generate_user do
     Account.create_user(%{
-      name: "random user",
+      name: Faker.Person.name(),
       email: Faker.Internet.email(),
-      preference: %{
-        likes_emails: true,
-        likes_phone_calls: false
-      }
+      username: Faker.Internet.user_name(),
+      password: "123456"
     })
+  end
+  def create_unsaved_user do
+    {:ok, %{
+      "name" => Faker.Person.name(),
+      "email" => Faker.Internet.email(),
+      "username" => Faker.Internet.user_name(),
+      "password" => "123456"
+    }}
+
   end
 end

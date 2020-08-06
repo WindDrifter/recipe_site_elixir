@@ -50,8 +50,10 @@ defmodule Recipebook.MixProject do
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},
       {:dataloader, "~> 1.0"},
-      {:ecto_shorts, "~> 0.1"},
-      {:faker, "~> 0.13", only: :test}
+      {:ecto_shorts, ">= 0.0.0"},
+      {:argon2_elixir, "~> 2.3"},
+      {:guardian, "~> 2.0"},
+      {:faker, "~> 0.14", only: :test}
     ]
   end
 

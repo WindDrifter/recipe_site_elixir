@@ -5,7 +5,6 @@ defmodule RecipebookWeb.Schema.Queries.User do
     field :user, :user do
       arg :id, :id
       arg :username, :string
-      arg :email, :string
     end
 
     field :users, list_of(:user) do

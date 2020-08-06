@@ -11,7 +11,7 @@ defmodule Recipebook.Cookbook.Recipe do
     has_many :steps, Recipebook.Cookbook.Step
     timestamps()
   end
-
+  
   @doc false
   def changeset(recipe, attrs) do
     recipe

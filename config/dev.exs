@@ -2,8 +2,8 @@ use Mix.Config
 
 # Configure your database
 config :recipebook, Recipebook.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "ryan",
+  password: "testing",
   database: "recipebook_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,

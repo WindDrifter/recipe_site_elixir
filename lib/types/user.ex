@@ -3,6 +3,7 @@ defmodule RecipebookWeb.Types.User do
   object :user do
     field :id, :id
     field :username, :string
+    field :name, :string
     field :email, :string
   end
 

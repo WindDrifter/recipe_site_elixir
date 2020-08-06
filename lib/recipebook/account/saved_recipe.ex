@@ -3,8 +3,8 @@ defmodule Recipebook.Account.SavedRecipe do
   import Ecto.Changeset
 
   schema "saved_recipes" do
-    field :user, :id
-    field :recipe, :id
+    belongs_to :user, Recipebook.Account.User
+    belongs_to :recipe, Recipebook.Cookbook.Recipe
 
     timestamps()
   end

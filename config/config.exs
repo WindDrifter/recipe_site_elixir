@@ -18,6 +18,9 @@ config :recipebook, RecipebookWeb.Endpoint,
   pubsub_server: Recipebook.PubSub,
   live_view: [signing_salt: "X4MO4Ihq"]
 
+config :ecto_shorts,
+  repo: Recipebook.Repo,
+  error_module: EctoShorts.Actions.Error
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
