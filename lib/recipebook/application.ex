@@ -14,7 +14,9 @@ defmodule Recipebook.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Recipebook.PubSub},
       # Start the Endpoint (http/https)
-      RecipebookWeb.Endpoint
+      RecipebookWeb.Endpoint,
+      Supervisor.child_spec(Recipebook.RecipeCounter, id: :recipe_counter),
+      Supervisor.child_spec({Recipebook.RecipeCounter, name: CategoryCounter}, id: :category_counter)
       # Start a worker by calling: Recipebook.Worker.start_link(arg)
       # {Recipebook.Worker, arg}
     ]

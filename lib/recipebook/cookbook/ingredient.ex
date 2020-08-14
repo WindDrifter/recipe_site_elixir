@@ -11,7 +11,9 @@ defmodule Recipebook.Cookbook.Ingredient do
 
     timestamps()
   end
-
+  def create_changeset(params) do
+    changeset(%Recipebook.Cookbook.Ingredient{}, params)
+  end
   @doc false
   def changeset(ingredient, attrs) do
     ingredient

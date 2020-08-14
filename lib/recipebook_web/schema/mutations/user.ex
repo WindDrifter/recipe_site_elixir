@@ -10,9 +10,12 @@ defmodule RecipebookWeb.Schema.Mutations.User do
       resolve &RecipebookWeb.Resolvers.User.create_user/2
     end
 
+    # Must add context
     field :update_user, :user do
-      arg :id, :id
+      arg :id, non_null(:id)
       arg :name, :string
+      arg :email, :string
+      arg :password, :string
     end
   end
 

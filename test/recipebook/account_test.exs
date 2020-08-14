@@ -3,7 +3,10 @@ defmodule Recipebook.AccountTest do
 
   alias Recipebook.Account
   alias Recipebook.Support.UserSupport
-
+  def setup_user(context) do
+    {_, user} = UserSupport.generate_user(true)
+    Map.put(context, :user, user)
+  end
   describe "&create user/1" do
     test "able to create user" do
       new_user = %{name: "test user", email: "test@test.com", username: "useruser", password: "12345"}
@@ -17,20 +20,23 @@ defmodule Recipebook.AccountTest do
     end
   end
   describe "&find_user/1" do
-    test "able to find user" do
-      new_user = %{name: "test user", email: "test@test.com", username: "useruser", password: "12345"}
-      assert {:ok, _} = Account.create_user(new_user)
-      assert {:ok, user} = Account.find_user(%{name: "test user"})
-      assert user.name === new_user[:name]
+    setup [:setup_user]
+    test "able to find user" , context do
+      user = context[:user]
+      assert {:ok, return_user} = Account.find_user(%{username: user.username})
+      assert user.name === return_user.name
     end
   end
   describe "&login_user/1" do
-    test "correct password and return token" do
-      new_user = %{name: "test user", email: "test2@test.com", password: "password2", username: "useruser34"}
-      assert {:ok, user} = Account.create_user(new_user)
-      
-      assert {:ok, id} = Account.login_user(%{username: "useruser34", password: "password2"})
+    setup [:setup_user]
+    test "correct password and return token" , context do
+      user = context[:user]
+      assert {:ok, id} = Account.login_user(%{username: user.username, password: user.password})
       assert id === user.id
+    end
+    test "wrong password and return error" , context do
+      user = context[:user]
+      assert {:error, _} = Account.login_user(%{username: user.username, password: "12345"})
     end
   end
 

@@ -4,11 +4,11 @@ defmodule Recipebook.Repo.Migrations.CreateSteps do
   def change do
     create table(:steps) do
       add :instruction, :text
-      add :recipe, references(:recipes, on_delete: :nothing)
+      add :recipe_id, references(:recipes, on_delete: :delete_all)
 
       timestamps()
     end
 
-    create index(:steps, [:recipe])
+    create index(:steps, [:recipe_id])
   end
 end

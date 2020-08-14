@@ -9,7 +9,8 @@ defmodule RecipebookWeb.Schema.Queries.Recipe do
 
     field :recipes, list_of(:recipe) do
       arg :name, :string
-
+      arg :ingredients, list_of(:string)
+      arg :categories, list_of(:string)
     end
   end
 

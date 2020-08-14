@@ -3,8 +3,8 @@ defmodule Recipebook.Repo.Migrations.CreateSavedRecipes do
 
   def change do
     create table(:saved_recipes) do
-      add :user, references(:users, on_delete: :nothing)
-      add :recipe, references(:recipes, on_delete: :nothing)
+      add :user, references(:users, on_delete: :delete_all)
+      add :recipe, references(:recipes, on_delete: :delete_all)
 
       timestamps()
     end

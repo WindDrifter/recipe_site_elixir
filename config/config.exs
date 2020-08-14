@@ -18,6 +18,11 @@ config :recipebook, RecipebookWeb.Endpoint,
   pubsub_server: Recipebook.PubSub,
   live_view: [signing_salt: "X4MO4Ihq"]
 
+config :recipebook, Recipebook.Account.Guardian,
+  issuer: "recipebook",
+  # user an env for production, for now just use this secret key for development
+  secret_key: "DNQtmshsFDhSKrFE7FGv33oS7nE99JEJ6s9kFwglB19AlHc9YXkD5Ziqmr5GSCne"
+
 config :ecto_shorts,
   repo: Recipebook.Repo,
   error_module: EctoShorts.Actions.Error

@@ -5,8 +5,8 @@ defmodule Recipebook.Repo.Migrations.CreateIngredients do
     create table(:ingredients) do
       add :amount, :integer
       add :unit, :string
-      add :food_id, references(:foods, on_delete: :nothing)
-      add :recipe_id, references(:recipes, on_delete: :nothing)
+      add :food_id, references(:foods, on_delete: :delete_all)
+      add :recipe_id, references(:recipes, on_delete: :delete_all)
 
       timestamps()
     end

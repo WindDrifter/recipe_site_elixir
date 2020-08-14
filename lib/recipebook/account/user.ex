@@ -18,7 +18,16 @@ defmodule Recipebook.Account.User do
 
   @required_fields [:email, :name, :username, :password]
   @available_fields [:id | @required_fields]
+  #
 
+  def by_name(query \\ Recipebook.Account.User, name) do
+    search = "%#{name}%"
+    from(u in query, where: ilike(u.name, ^search))
+  end
+  def by_username(query \\ Recipebook.Account.User, username) do
+    search = "%#{username}%"
+    from(u in query, where: ilike(u.username, ^search))
+  end
 
   def create_changeset(params) do
     changeset(%Recipebook.Account.User{}, params)

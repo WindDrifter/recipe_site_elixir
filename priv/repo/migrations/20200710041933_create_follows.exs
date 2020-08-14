@@ -3,8 +3,8 @@ defmodule Recipebook.Repo.Migrations.CreateFollows do
 
   def change do
     create table(:follows) do
-      add :user, references(:users, on_delete: :nothing)
-      add :follow, references(:users, on_delete: :nothing)
+      add :user, references(:users, on_delete: :delete_all)
+      add :follow, references(:users, on_delete: :delete_all)
 
       timestamps()
     end
