@@ -1,18 +1,17 @@
 defmodule Recipebook.Account.User do
   import Argon2
-  import Ecto.Changeset
-  import Ecto.Query
-  use Ecto.Schema
+  import Ecto.{Changeset, Query}
   alias EctoShorts.CommonChanges
-  alias Recipebook.Repo
+
+  use Ecto.Schema
   schema "users" do
     field :email, :string
     field :name, :string
     field :password, :string
     field :username, :string
     has_many :recipes, Recipebook.Cookbook.Recipe
-    has_many :follows, Recipebook.Account.Follow
-    has_many :saved_recipe, Recipebook.Account.SavedRecipe
+    many_to_many :users, Recipebook.Account.User, join_through: Recipebook.Account.FollowingUser, join_keys: [user_id: :id, following_user_id: :id]
+    has_many :saved_recipes, Recipebook.Account.SavedRecipe
     timestamps()
   end
 
@@ -29,6 +28,15 @@ defmodule Recipebook.Account.User do
     from(u in query, where: ilike(u.username, ^search))
   end
 
+
+  def find_user_followers(query \\ Recipebook.Account.User, id) do
+    where(query, [followed: f], f.id == ^id)
+  end
+
+  def join_other_users_as_followers(query \\ Recipebook.Account.User) do
+    join(query, :inner, [u], f in assoc(u, :users), as: :followed)
+  end
+
   def create_changeset(params) do
     changeset(%Recipebook.Account.User{}, params)
   end
@@ -41,6 +49,9 @@ defmodule Recipebook.Account.User do
     |> put_pass_hash
     |> unique_constraint(:email)
     |> unique_constraint(:username)
+    |> CommonChanges.preload_change_assoc(:users)
+    |> CommonChanges.preload_change_assoc(:saved_recipes)
+
   end
 
   defp put_pass_hash(%Ecto.Changeset{changes:

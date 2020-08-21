@@ -7,6 +7,7 @@ defmodule RecipebookWeb.Schema.Mutations.Recipe do
       arg :ingredients, list_of(:ingredient)
       arg :steps, list_of(:step)
       arg :category, list_of(:string)
+      resolve &RecipebookWeb.Resolvers.Recipe.create_recipe/3
     end
 
     field :update_recipe, :recipe do
@@ -15,6 +16,7 @@ defmodule RecipebookWeb.Schema.Mutations.Recipe do
       arg :ingredients, list_of(:ingredient)
       arg :steps, list_of(:step)
       arg :category, list_of(:string)
+      resolve &RecipebookWeb.Resolvers.Recipe.update_recipe/3
     end
   end
 

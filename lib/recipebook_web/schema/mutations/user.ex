@@ -17,6 +17,11 @@ defmodule RecipebookWeb.Schema.Mutations.User do
       arg :email, :string
       arg :password, :string
     end
+
+    field :follow_user, :user do
+      arg :id, non_null(:id)
+      resolve &RecipebookWeb.Resolvers.User.follow_user/2
+    end
   end
 
 end

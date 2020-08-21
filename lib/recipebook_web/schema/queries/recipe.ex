@@ -11,6 +11,8 @@ defmodule RecipebookWeb.Schema.Queries.Recipe do
       arg :name, :string
       arg :ingredients, list_of(:string)
       arg :categories, list_of(:string)
+      arg :first, :integer
+      arg :after, :id
     end
   end
 

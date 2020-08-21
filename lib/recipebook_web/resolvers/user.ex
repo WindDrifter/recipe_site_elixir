@@ -6,6 +6,10 @@ defmodule RecipebookWeb.Resolvers.User do
       Account.all_users(params)
     end
 
+    def follow_user(params, _, context) do
+
+    end
+
     def find(%{id: id}, _) do
       id = String.to_integer(id)
       Account.find_user(%{id: id})

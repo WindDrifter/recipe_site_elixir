@@ -5,7 +5,7 @@ defmodule RecipebookWeb.Schema do
   import_types RecipebookWeb.Types.Stat
   import_types RecipebookWeb.Schema.Queries.Stat
   import_types RecipebookWeb.Schema.Queries.User
-  import_types RecipebookWeb.Schema.Mutations.{User}
+  import_types RecipebookWeb.Schema.Mutations.User
   # import_types RecipebookWeb.Schema.Subscriptions.User
 
   query do

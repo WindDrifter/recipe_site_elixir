@@ -13,7 +13,7 @@ defmodule RecipebookWeb.Schema.Queries.User do
       arg :username, :string
       arg :name, :string
       arg :first, :integer
-      arg :limit, :integer
+      arg :after, :id
       resolve &RecipebookWeb.Resolvers.User.all/2
     end
   end

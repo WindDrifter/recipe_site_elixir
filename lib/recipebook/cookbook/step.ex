@@ -9,10 +9,13 @@ defmodule Recipebook.Cookbook.Step do
     timestamps()
   end
 
+  @required_params [:instruction, :number]
+  @all_params [:recipe_id | @required_params]
+
   @doc false
   def changeset(step, attrs) do
     step
-    |> cast(attrs, [:instruction])
-    |> validate_required([:instruction])
+    |> cast(attrs, @all_params)
+    |> validate_required(@required_params)
   end
 end

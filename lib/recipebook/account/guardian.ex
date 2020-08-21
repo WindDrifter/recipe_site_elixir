@@ -8,7 +8,8 @@ defmodule Recipebook.Account.Guardian do
   end
 
   def resources_from_claims(%{"sub" => id}) do
-    Account.get_user(%{id: id})
+    Account.find_user(%{id: id})
   end
 
-end
+
+ end

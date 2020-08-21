@@ -6,7 +6,6 @@ defmodule Recipebook.Cookbook.Food do
     field :info, :string
     field :name, :string
     field :wiki_url, :string
-    has_many :ingredients, Recipebook.Cookbook.Ingredient
     timestamps()
   end
 

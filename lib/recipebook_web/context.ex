@@ -1,9 +1,8 @@
 defmodule RecipebookWeb.Context do
   @behaviour Plug
   import Plug.Conn
-  import Ecto.Query, only: [where: 2]
-  alias Recipebook.{Repo, Account, Cookbook}
-
+  alias Recipebook.{Account}
+  alias Recipebook.Account.Guardian
   def init(opts), do: opts
 
   def call(conn, _) do
@@ -20,8 +19,11 @@ defmodule RecipebookWeb.Context do
     end
   end
   defp authorize(token) do
-    Account.find_user()
+    with {:ok, claims} <- Guardian.decode_and_verify(token) do
+      Account.find_user(%{id: claims})
+    else
+      _ -> {:error, "Invalid token"}
+    end
   end
-
 
 end
