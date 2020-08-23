@@ -6,21 +6,34 @@ defmodule Recipebook.Account do
   import Argon2
   import Ecto.{Changeset, Query}
 
-  def follow_user(user, id) do
+  def follow_user(user, %{id: id} = _params) do
     with {:ok, followed_user} <- find_user(%{id: id}) do
       Actions.create(FollowingUser, %{user_id: user.id, following_user_id: id})
     else
       {_, _} -> {:error, "User does not exist"}
     end
   end
-
+  def unfollow_user(user, %{id: id} = _params) do
+    with {:ok, result} <- Actions.find(FollowingUser, %{following_user_id: id, user_id: user.id}) do
+      Actions.delete(result)
+    else
+      {_, _}  -> {:error, "User does not exist"}
+    end
+  end
   def all_users(params \\ %{}) do
     {search, params} = Map.split(params, [:name, :username])
     query = Enum.reduce(search, User, &convert_field_to_query/2)
     {:ok, Actions.all(query, params)}
   end
 
-  def get_followers(%{id: id} = params) do
+  def get_followers(%{id: id} = _params) do
+    query = User
+    |> User.join_other_users_as_followers()
+    |> User.find_user_followers(id)
+    {:ok, Actions.all(query, %{})}
+  end
+
+  def get_followers(id) do
     query = User
     |> User.join_other_users_as_followers()
     |> User.find_user_followers(id)
@@ -62,8 +75,12 @@ defmodule Recipebook.Account do
     Actions.find(User, params)
   end
 
-  def update_user(id ,params) do
-    Actions.update(User, id, params)
+  def update_user(user, id ,params) do
+    if user.id === id do
+      Actions.update(User, id, params)
+    else
+      {:error, "You do not have permission to edit the user data"}
+    end
   end
 
   def create_user(params) do
@@ -76,10 +93,9 @@ defmodule Recipebook.Account do
 
   def save_recipe(user, %{recipe_id: recipe_id} = _params) do
     with {:ok, recipe} <- Actions.find(Recipe, %{id: recipe_id}) do
-        Actions.create(SavedRecipe, %{user: user, recipe: recipe})
+      Actions.create(SavedRecipe, %{user: user, recipe: recipe})
     else
       {_, _} -> {:error, "user or recipe not found"}
-
     end
   end
 

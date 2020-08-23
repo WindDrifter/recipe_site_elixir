@@ -17,13 +17,20 @@ defmodule Recipebook.Support.RecipeSupport do
   end
   def generate_recipe(user) do
     params = %{
-      name: "recipe thing",
+      name: Faker.Food.dish(),
       ingredients: generate_ingredients(),
       categories: ["comfort food", "breakfast"],
       steps: generate_steps()
     }
     Cookbook.create_recipe(params, user)
-
+  end
+  def generate_raw_recipe do
+    %{
+      "name" => Faker.Food.dish(),
+      "ingredients" => generate_graphql_ingredients(5),
+      "categories" => ["comfort food", "breakfast"],
+      "steps" => generate_graphql_steps(5)
+    }
   end
   def generate_ingredients_name(max \\ 4) do
     for _n <- 1..max, do: Faker.Food.ingredient()
@@ -33,17 +40,29 @@ defmodule Recipebook.Support.RecipeSupport do
   end
 
   def generate_ingredients(max \\ 4) do
-    ingredients = []
-    for _n <- 1..max do
-      Enum.concat([%{name: Faker.Food.ingredient(), unit: Faker.Food.measurement(), amount: 100}], ingredients)
+    ingredients = for _n <- 1..max do
+      %{name: Faker.Food.ingredient(), unit: Faker.Food.measurement(), amount: 100}
+    end
+    ingredients
+  end
+
+  def generate_graphql_ingredients(max \\ 4) do
+    ingredients = for _n <- 1..max do
+      %{"name" => Faker.Food.ingredient(), "unit" => Faker.Food.measurement(), "amount" => 100}
     end
     ingredients
   end
 
   defp generate_steps(max \\ 5) do
-    steps = []
-    for n <- 1..max do
-      Enum.concat([%{number: n, instruction: "do this #{n}"}], steps)
+    steps = for n <- 1..max do
+      %{number: n, instruction: "do this #{n}"}
+    end
+    steps
+  end
+
+  defp generate_graphql_steps(max \\ 5) do
+    steps = for n <- 1..max do
+      %{"number" => n, "instruction" => "do this #{n}"}
     end
     steps
   end

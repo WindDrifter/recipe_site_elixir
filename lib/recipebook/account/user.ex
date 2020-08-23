@@ -58,4 +58,10 @@ defmodule Recipebook.Account.User do
     %{password: password}} = changeset) do
     change(changeset, add_hash(password, hash_key: :password))
   end
+
+  # For when password parameter does not exist
+  defp put_pass_hash(%Ecto.Changeset{changes:
+  %{}} = changeset) do
+  changeset
+end
 end

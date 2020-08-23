@@ -1,7 +1,6 @@
 defmodule Recipebook.Account.FollowingUser do
   use Ecto.Schema
   import Ecto.Changeset
-  alias EctoShorts.CommonChanges
 
   schema "following_users" do
     belongs_to :user, Recipebook.Account.User

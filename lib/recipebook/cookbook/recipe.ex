@@ -47,9 +47,12 @@ defmodule Recipebook.Cookbook.Recipe do
   def changeset(recipe, attrs) do
     recipe
     |> cast(attrs, @available_fields)
-    |> CommonChanges.preload_change_assoc(:user, required: true)
-    |> CommonChanges.preload_change_assoc(:ingredients, required: true)
-    |> CommonChanges.preload_change_assoc(:steps, required: true)
+    |> CommonChanges.preload_changeset_assoc(:user, required: true)
+    |> CommonChanges.preload_changeset_assoc(:ingredients, required: true)
+    |> CommonChanges.preload_changeset_assoc(:steps, required: true)
+    |> CommonChanges.put_or_cast_assoc(:user, required: true)
+    |> CommonChanges.put_or_cast_assoc(:ingredients, required: true)
+    |> CommonChanges.put_or_cast_assoc(:steps, required: true)
     |> validate_required(@required_fields)
 
 

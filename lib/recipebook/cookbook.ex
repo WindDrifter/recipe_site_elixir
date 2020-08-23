@@ -1,7 +1,6 @@
 defmodule Recipebook.Cookbook do
-    alias Recipebook.Cookbook.{Recipe, Food, Ingredient}
-    alias EctoShorts.{Actions, CommonFilters}
-    import Argon2
+    alias Recipebook.Cookbook.{Recipe, Food}
+    alias EctoShorts.{Actions}
     def all_recipes(params \\ %{}) do
       query =
       Recipe
@@ -32,18 +31,19 @@ defmodule Recipebook.Cookbook do
       Recipe.search_by_ingredient(value, query)
     end
 
-    # defp convert_field_to_query({:chef_name, value}, query) do
-    #   User.by_username(query, value)
-    # end
     defp add_recipe_category_stats(category) do
       Recipebook.RecipeCounter.increment_by_one(CategoryCounter, category)
     end
 
-    def update_recipe(id, params) do
-      Actions.update(Recipe, id, params)
+    def update_recipe(user, id, params) do
+      with {:ok, _recipe} <- Actions.find(Recipe, %{id: id, user_id: user.id}) do
+        Actions.update(Recipe, id, params)
+      else
+        {_, _}  -> {:error, "Recipe do not exist or you do not have permission to edit it"}
+      end
     end
 
-    def create_recipe(params \\%{}, user) do
+    def create_recipe(params \\ %{}, user) do
       ingredients = Map.get(params, :ingredients, [])
       Enum.map(ingredients, fn ingredient -> create_food(ingredient) end)
       params = params

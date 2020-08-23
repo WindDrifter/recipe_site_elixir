@@ -2,10 +2,13 @@ defmodule RecipebookWeb.Schema do
   use Absinthe.Schema
 
   import_types RecipebookWeb.Types.User
+  import_types RecipebookWeb.Types.Recipe
   import_types RecipebookWeb.Types.Stat
+
   import_types RecipebookWeb.Schema.Queries.Stat
   import_types RecipebookWeb.Schema.Queries.User
   import_types RecipebookWeb.Schema.Mutations.User
+  import_types RecipebookWeb.Schema.Mutations.Recipe
   # import_types RecipebookWeb.Schema.Subscriptions.User
 
   query do
@@ -15,6 +18,7 @@ defmodule RecipebookWeb.Schema do
 
   mutation do
     import_fields :user_mutations
+    import_fields :recipe_mutations
   end
 
   # subscription do

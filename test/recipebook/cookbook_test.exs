@@ -81,7 +81,7 @@ defmodule Recipebook.CookbookTest do
         ingredient_names2 = RecipeSupport.generate_ingredients_name(5) -- ingredients
         ingredient_set_two = RecipeSupport.create_ingredient_sets(ingredient_names2)
         recipes = RecipeSupport.generate_recipes(user, ingredient_set_two)
-        [first_ingredient | the_rest] = ingredient_names2
+        [first_ingredient | _ ] = ingredient_names2
         assert {:ok, returned_recipes} = Cookbook.all_recipes(%{ingredients: [first_ingredient]})
         assert Enum.count(returned_recipes) === Enum.count(recipes)
       end
@@ -90,6 +90,23 @@ defmodule Recipebook.CookbookTest do
         assert Enum.count(returned_recipes) === 3
       end
     end
-
+    describe "&update_recipe/1" do
+      setup [:setup_user]
+      test "able to find recipe", context do
+        user = context[:user]
+        {:ok, recipe} = RecipeSupport.generate_recipe(user)
+        new_recipe = RecipeSupport.generate_raw_recipe()
+        assert {:ok, result} = Cookbook.update_recipe(user, recipe.id, new_recipe)
+        assert result.name === new_recipe["name"]
+      end
+      test "return error if try to edit someone else's recipe", context do
+        user = context[:user]
+        {:ok, another_user} = UserSupport.generate_user
+        {:ok, recipe} = RecipeSupport.generate_recipe(another_user)
+        new_recipe = RecipeSupport.generate_raw_recipe()
+        assert {:error, message} = Cookbook.update_recipe(user, recipe.id, new_recipe)
+        assert message =~ "do not exist"
+      end
+    end
 
   end

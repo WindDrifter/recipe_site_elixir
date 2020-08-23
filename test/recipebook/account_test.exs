@@ -66,11 +66,28 @@ defmodule Recipebook.AccountTest do
       user = context[:user]
       {_, followed_user} = UserSupport.generate_user
 
-      assert {:ok, _} = Account.follow_user(user, followed_user.id)
+      assert {:ok, _} = Account.follow_user(user, %{id: followed_user.id})
     end
     test "return error if user does not eixst" , context do
       user = context[:user]
-      assert {:error, _} = Account.follow_user( user, "222244444")
+      assert {:error, _} = Account.follow_user( user, %{id: "222244444"})
+    end
+  end
+  describe "&update_user/3" do
+    setup [:setup_user]
+    test "successfully update details user update own account" , context do
+      user = context[:user]
+      original_email = user.email
+      assert {:ok, result} = Account.update_user(user, user.id, %{email: "aaaaaa@bbbbb.com"})
+      assert {:ok, return_user} = Account.find_user(%{id: user.id})
+      assert result.email === "aaaaaa@bbbbb.com"
+      assert return_user.email === "aaaaaa@bbbbb.com"
+      assert original_email !== "aaaaaa@bbbbb.com"
+    end
+    test "fail if tried to update someone else's account" , context do
+      user = context[:user]
+      {_, another_user} = UserSupport.generate_user
+      assert {:error, _} = Account.update_user(user, another_user.id, %{email: "aaaaaa@bbbbb.com"})
     end
   end
 
@@ -97,7 +114,9 @@ defmodule Recipebook.AccountTest do
     end
     test "return error if recipe not found", context do
       user = context[:user]
-      assert {:error, _} = Account.save_recipe(user, %{recipe_id: "000011"})
+      assert {:error, message} = Account.save_recipe(user, %{recipe_id: "000011"})
+      assert message =~ "not found"
+
     end
   end
   describe "&unsave_recipe/1" do
@@ -111,7 +130,9 @@ defmodule Recipebook.AccountTest do
     end
     test "return error if recipe not found", context do
       user = context[:user]
-      assert {:error, _} = Account.unsave_recipe(user, %{recipe_id: "000011"})
+      assert {:error, message} = Account.unsave_recipe(user, %{recipe_id: "000011"})
+      assert message =~ "not found"
+
     end
   end
   describe "&get_saved_recipes/1" do

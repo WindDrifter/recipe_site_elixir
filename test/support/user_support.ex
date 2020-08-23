@@ -25,7 +25,7 @@ defmodule Recipebook.Support.UserSupport do
         username: Faker.Internet.user_name(),
         password: Faker.String.base64()
       })
-      Account.follow_user(follower, chef.id)
+      Account.follow_user(follower, %{id: chef.id})
     end
     {:ok, follower}
   end
@@ -44,7 +44,7 @@ defmodule Recipebook.Support.UserSupport do
         username: Faker.Internet.user_name(),
         password: Faker.String.base64()
       })
-      Account.follow_user(follower, user.id)
+      Account.follow_user(follower, %{id: user.id})
     end
     {:ok, user}
   end

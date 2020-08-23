@@ -6,23 +6,23 @@ defmodule RecipebookWeb.Resolvers.Recipe do
   end
   def find(%{id: id}, _) do
     id = String.to_integer(id)
-    Cookbook.find_user(%{id: id})
+    Cookbook.find_recipe(%{id: id})
   end
 
   def find(params, _) when params != %{} do
-    Cookbook.find_user(params)
+    Cookbook.find_recipe(params)
   end
 
   def find(params, _) when params == %{} do
     {:error, "must enter at least one params"}
   end
 
-  def update_recipe(%{id: id} = params, _, %{context: %{current_user: current_user}}) do
+  def update_recipe(_ ,%{id: id} = params, %{context: %{current_user: current_user}}) do
     id = String.to_integer(id)
-    Account.update_user(id, Map.delete(params, :id))
+    Cookbook.update_recipe(current_user, id, Map.delete(params, :id))
   end
 
-  def create_recipe(params, _, %{context: %{current_user: current_user}}) do
+  def create_recipe(_, params, %{context: %{current_user: current_user}}) do
     Cookbook.create_recipe(params, current_user)
   end
 

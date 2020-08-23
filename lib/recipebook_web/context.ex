@@ -19,8 +19,8 @@ defmodule RecipebookWeb.Context do
     end
   end
   defp authorize(token) do
-    with {:ok, claims} <- Guardian.decode_and_verify(token) do
-      Account.find_user(%{id: claims})
+    with {:ok, decoded_token} <- Guardian.decode_and_verify(token) do
+      Account.find_user(%{id: decoded_token["sub"]})
     else
       _ -> {:error, "Invalid token"}
     end
