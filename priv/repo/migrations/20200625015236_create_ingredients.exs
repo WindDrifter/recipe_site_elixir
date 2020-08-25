@@ -1,8 +1,8 @@
-defmodule Recipebook.Repo.Migrations.CreateFoods do
+defmodule Recipebook.Repo.Migrations.CreateIngredients do
   use Ecto.Migration
 
   def change do
-    create table(:foods) do
+    create table(:ingredients) do
       add :name, :citext
       add :info, :text
       add :wiki_url, :text
@@ -10,6 +10,6 @@ defmodule Recipebook.Repo.Migrations.CreateFoods do
       timestamps()
     end
 
-    create unique_index(:foods, [:name])
+    create unique_index(:ingredients, [:name])
   end
 end

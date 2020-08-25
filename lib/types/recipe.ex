@@ -8,7 +8,7 @@ defmodule RecipebookWeb.Types.Recipe do
     field :name, :string
     field :info, :string
     field :categories, list_of(:string)
-    field :ingredients, list_of(:ingredient), resolve: dataloader(Recipebook.Cookbook, :ingredient)
+    field :user, :user
   end
 
   object :ingredient do

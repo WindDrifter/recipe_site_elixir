@@ -9,7 +9,7 @@ defmodule RecipebookWeb.Schema do
   import_types RecipebookWeb.Schema.Queries.User
   import_types RecipebookWeb.Schema.Mutations.User
   import_types RecipebookWeb.Schema.Mutations.Recipe
-  # import_types RecipebookWeb.Schema.Subscriptions.User
+  import_types RecipebookWeb.Schema.Subscriptions.Recipe
 
   query do
     import_fields :user_queries
@@ -21,9 +21,9 @@ defmodule RecipebookWeb.Schema do
     import_fields :recipe_mutations
   end
 
-  # subscription do
-  #   import_fields :user_subscriptions
-  # end
+  subscription do
+    import_fields :recipe_subscriptions
+  end
 
   def context(ctx) do
     source = Dataloader.Ecto.new(Recipebook.Repo)

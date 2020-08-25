@@ -1,6 +1,6 @@
 defmodule RecipebookWeb.UserSocket do
   use Phoenix.Socket
-
+  use Absinthe.Phoenix.Socket, schema: RecipebookWeb.Schema
   ## Channels
   # channel "room:*", RecipebookWeb.RoomChannel
 
@@ -20,6 +20,18 @@ defmodule RecipebookWeb.UserSocket do
     {:ok, socket}
   end
 
+  @impl true
+  def connect(params, socket) do
+    current_user = current_user(params)
+    socket = Absinthe.Phoenix.Socket.put_options(socket, context: %{
+      current_user: current_user
+    })
+    {:ok, socket}
+  end
+
+  defp current_user(%{"user_id" => id}) do
+    Recipebook.Repo.get(User, id)
+  end
   # Socket id's are topics that allow you to identify all sockets for a given user:
   #
   #     def id(socket), do: "user_socket:#{socket.assigns.user_id}"

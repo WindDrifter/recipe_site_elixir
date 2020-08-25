@@ -1,18 +1,18 @@
 defmodule Recipebook.Cookbook do
-    alias Recipebook.Cookbook.{Recipe, Food}
+    alias Recipebook.Cookbook.{Recipe, Ingredient}
     alias EctoShorts.{Actions}
     def all_recipes(params \\ %{}) do
-      query =
-      Recipe
-      |> Recipe.join_with_ingredients()
-      |> Recipe.join_with_user()
-      {non_recipe_params, params} = Map.split(params, [:ingredients])
-      query = Enum.reduce(non_recipe_params, query, &convert_field_to_query/2)
+      {other_params, params} = Map.split(params, [:chef_name, :ingredients])
+
+      query = Recipe.join_with_ingredients(Recipe)
+      query = Enum.reduce(other_params, query, &convert_field_to_query/2)
+
       {:ok, Actions.all(query, params)}
     end
 
     def find_recipe(params \\ %{}) do
       with {:ok, recipe} <- Actions.find(Recipe, params) do
+        # I have to increase stats whenever a reciped id is called
         Recipebook.RecipeCounter.increment_by_one(recipe.name)
         Enum.map(recipe.categories, fn category -> add_recipe_category_stats(category) end)
         {:ok, recipe}
@@ -44,15 +44,21 @@ defmodule Recipebook.Cookbook do
     end
 
     def create_recipe(params \\ %{}, user) do
-      ingredients = Map.get(params, :ingredients, [])
-      Enum.map(ingredients, fn ingredient -> create_food(ingredient) end)
+      # IO.inspect(user)
+      {ingredients, params} = Map.pop(params, :ingredients, [])
+      recipe_ingredients = Enum.map(ingredients, fn ingredient -> create_ingredient(ingredient) end)
       params = params
-      |> Map.put(:ingredients, ingredients)
+      |> Map.put(:recipe_ingredients, recipe_ingredients)
       |> Map.put(:user, user)
+
       Actions.create(Recipe, params)
     end
-    def create_food(%{name: name} = _params) do
-      Actions.find_or_create(Food, %{name: name})
+    def create_ingredient(%{name: name} = params) do
+      {:ok, ingredient} = Actions.find_or_create(Ingredient, %{name: name})
+      params
+      |> Map.delete(:name)
+      |> Map.put(:ingredient, ingredient)
+
     end
 
   end

@@ -1,8 +1,8 @@
 defmodule RecipebookWeb.Schema.Queries.StatTest do
   use Recipebook.DataCase, async: true
+  use ExUnit.Case, async: true
 
   alias RecipebookWeb.Schema
-  use ExUnit.Case, async: true
   alias Recipebook.RecipeCounter
   alias Recipebook.Support.StatSupport
 

@@ -32,7 +32,7 @@ defmodule RecipebookWeb.Schema.Mutations.UserTest do
   @follow_user_doc """
   mutation FollowUser($id: ID){
     followUser(id: $id) {
-      token
+      id
     }
   }
   """
@@ -117,8 +117,15 @@ defmodule RecipebookWeb.Schema.Mutations.UserTest do
       assert found_user.name !== "wololo something"
     end
   end
-  describe "followUser" do
-
+  describe "@followUser" do
+    setup [:setup_user]
+    test "able to follow another user", context do
+      user = context[:user]
+      {_, another_user} = UserSupport.generate_user
+      assert {:ok, _} = Absinthe.run(@follow_user_doc, Schema,
+      [variables: %{"id" => another_user.id}, context: %{current_user: user}]
+    )
+    end
   end
 
 end

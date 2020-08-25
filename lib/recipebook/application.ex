@@ -12,9 +12,10 @@ defmodule Recipebook.Application do
       # Start the Telemetry supervisor
       RecipebookWeb.Telemetry,
       # Start the PubSub system
-      {Phoenix.PubSub, name: Recipebook.PubSub},
       # Start the Endpoint (http/https)
       RecipebookWeb.Endpoint,
+      {Phoenix.PubSub, [name: Recipebook.PubSub, adapter: Phoenix.PubSub.PG2]},
+      {Absinthe.Subscription, RecipebookWeb.Endpoint},
       Supervisor.child_spec(Recipebook.RecipeCounter, id: :recipe_counter),
       Supervisor.child_spec({Recipebook.RecipeCounter, name: CategoryCounter}, id: :category_counter)
       # Start a worker by calling: Recipebook.Worker.start_link(arg)

@@ -17,12 +17,12 @@ defmodule RecipebookWeb.Resolvers.Recipe do
     {:error, "must enter at least one params"}
   end
 
-  def update_recipe(_ ,%{id: id} = params, %{context: %{current_user: current_user}}) do
+  def update_recipe(%{id: id} = params, %{context: %{current_user: current_user}}) do
     id = String.to_integer(id)
     Cookbook.update_recipe(current_user, id, Map.delete(params, :id))
   end
 
-  def create_recipe(_, params, %{context: %{current_user: current_user}}) do
+  def create_recipe(params, %{context: %{current_user: current_user}}) do
     Cookbook.create_recipe(params, current_user)
   end
 

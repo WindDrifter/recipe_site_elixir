@@ -6,11 +6,11 @@ defmodule RecipebookWeb.Resolvers.User do
       Account.all_users(params)
     end
 
-    def follow_user(_, params,  %{context: %{current_user: current_user}}) do
+    def follow_user(params,  %{context: %{current_user: current_user}}) do
       Account.follow_user(current_user, params)
     end
 
-    def unfollow_user(_, params,  %{context: %{current_user: current_user}}) do
+    def unfollow_user(params,  %{context: %{current_user: current_user}}) do
       Account.unfollow_user(current_user, params)
     end
 
@@ -39,12 +39,12 @@ defmodule RecipebookWeb.Resolvers.User do
       Account.all_users(params)
     end
 
-    def update_user(_, %{id: id} = params, %{context: %{current_user: current_user}}) do
+    def update_user(%{id: id} = params, %{context: %{current_user: current_user}}) do
       id = String.to_integer(id)
       Account.update_user(current_user, id, Map.delete(params, :id))
     end
 
-    def get_saved_recipes(_, _,  %{context: %{current_user: current_user}}) do
+    def get_saved_recipes(_,  %{context: %{current_user: current_user}}) do
       Account.get_saved_recipes(current_user)
     end
 
