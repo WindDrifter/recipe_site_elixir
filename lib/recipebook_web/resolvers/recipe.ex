@@ -19,7 +19,7 @@ defmodule RecipebookWeb.Resolvers.Recipe do
 
   def update_recipe(%{id: id} = params, %{context: %{current_user: current_user}}) do
     id = String.to_integer(id)
-    Cookbook.update_recipe(current_user, id, Map.delete(params, :id))
+    Cookbook.update_recipe(current_user, id, params)
   end
 
   def create_recipe(params, %{context: %{current_user: current_user}}) do

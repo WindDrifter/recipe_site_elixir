@@ -29,7 +29,7 @@ defmodule Recipebook.Support.RecipeSupport do
       "name" => Faker.Food.dish(),
       "ingredients" => generate_graphql_ingredients(5),
       "categories" => ["comfort food", "breakfast"],
-      "steps" => generate_graphql_steps(5)
+      "steps" => generate_graphql_steps()
     }
   end
   def generate_ingredients_name(max \\ 4) do
@@ -41,7 +41,7 @@ defmodule Recipebook.Support.RecipeSupport do
 
   def generate_ingredients(max \\ 4) do
     ingredients = for _n <- 1..max do
-      %{name: Faker.Food.ingredient(), unit: Faker.Food.measurement(), amount: 100}
+      %{name: Faker.Food.ingredient(), unit: Faker.Food.measurement(), amount: Enum.random(0..100)}
     end
     ingredients
   end
@@ -53,7 +53,7 @@ defmodule Recipebook.Support.RecipeSupport do
     ingredients
   end
 
-  defp generate_steps(max \\ 5) do
+  def generate_steps(max \\ 5) do
     steps = for n <- 1..max do
       %{number: n, instruction: "do this #{n}"}
     end

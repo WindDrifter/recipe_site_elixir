@@ -6,7 +6,7 @@ defmodule RecipebookWeb.Resolvers.User do
       Account.all_users(params)
     end
 
-    def follow_user(params,  %{context: %{current_user: current_user}}) do
+    def follow_user(params, %{context: %{current_user: current_user}}) do
       Account.follow_user(current_user, params)
     end
 
@@ -52,6 +52,12 @@ defmodule RecipebookWeb.Resolvers.User do
       Account.create_user(params)
     end
 
+    def save_recipe(params, %{context: %{current_user: current_user}}) do
+      Account.save_recipe(current_user, params)
+    end
+    def unsave_recipe(params, %{context: %{current_user: current_user}}) do
+      Account.unsave_recipe(current_user, params)
+    end
     def login_user(params, _) do
       Account.login_user(params)
     end

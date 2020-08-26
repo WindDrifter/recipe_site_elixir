@@ -66,6 +66,7 @@ defmodule RecipebookWeb.Schema.Mutations.RecipeTest do
       )
       assert {:ok, found_recipe} = Cookbook.find_recipe(%{id: old_recipe_id})
       assert found_recipe.name === new_recipe["name"]
+
       assert found_recipe.name !== old_recipe.name
     end
     test "not able to create recipe if an important arg is missing", context do

@@ -91,7 +91,7 @@ defmodule Recipebook.CookbookTest do
       test "get all recipe based on ingredients", context do
         ingredients = context[:output].ingredients
         user = context[:output].user
-        ingredient_names2 = RecipeSupport.generate_ingredients_name(5) -- ingredients
+        ingredient_names2 = RecipeSupport.generate_ingredients_name(7) -- ingredients
         ingredient_set_two = RecipeSupport.create_ingredient_sets(ingredient_names2)
         recipes = RecipeSupport.generate_recipes(user, ingredient_set_two)
         assert {:ok, returned_recipes} = Cookbook.all_recipes(%{ingredients: ingredient_names2})
@@ -107,19 +107,33 @@ defmodule Recipebook.CookbookTest do
     describe "&update_recipe/1" do
       setup [:setup_user]
 
-      test "able to find recipe", context do
+      test "able to update recipe", context do
         user = context[:user]
         {:ok, recipe} = RecipeSupport.generate_recipe(user)
-        new_recipe = RecipeSupport.generate_raw_recipe()
+        new_recipe = %{
+          name: Faker.Food.dish(),
+          ingredients: RecipeSupport.generate_ingredients(6),
+          categories: ["Soup", "dinner", "lunch"],
+          steps: RecipeSupport.generate_steps(10)
+        }
         assert {:ok, result} = Cookbook.update_recipe(user, recipe.id, new_recipe)
-        assert result.name === new_recipe["name"]
+        assert Enum.count(result.recipe_ingredients) === Enum.count(new_recipe.ingredients)
+        assert Enum.count(result.steps) === Enum.count(new_recipe.steps)
+        assert Enum.count(result.categories) === Enum.count(new_recipe.categories)
+
+        assert result.name === new_recipe.name
       end
 
       test "return error if try to edit someone else's recipe", context do
         user = context[:user]
         {:ok, another_user} = UserSupport.generate_user
         {:ok, recipe} = RecipeSupport.generate_recipe(another_user)
-        new_recipe = RecipeSupport.generate_raw_recipe()
+        new_recipe =  %{
+          name: Faker.Food.dish(),
+          ingredients: RecipeSupport.generate_ingredients(),
+          categories: ["comfort food", "breakfast", "lunch"],
+          steps: RecipeSupport.generate_steps()
+        }
         assert {:error, message} = Cookbook.update_recipe(user, recipe.id, new_recipe)
         assert message =~ "do not exist"
       end

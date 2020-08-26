@@ -9,13 +9,15 @@ defmodule Recipebook.Account do
   def follow_user(user, %{id: id} = _params) do
     with {:ok, followed_user} <- find_user(%{id: id}) do
       Actions.create(FollowingUser, %{user_id: user.id, following_user_id: id})
+      {:ok, %{message: "Successfully followed user", followed_user: user.name}}
     else
       {_, _} -> {:error, "User does not exist"}
     end
   end
   def unfollow_user(user, %{id: id} = _params) do
     with {:ok, result} <- Actions.find(FollowingUser, %{following_user_id: id, user_id: user.id}) do
-      Actions.delete(result)
+      {:ok, _} = Actions.delete(result)
+      {:ok, %{message: "Succuessfully unfollow user"}}
     else
       {_, _}  -> {:error, "User does not exist"}
     end
@@ -27,13 +29,6 @@ defmodule Recipebook.Account do
   end
 
   def get_followers(%{id: id} = _params) do
-    query = User
-    |> User.join_other_users_as_followers()
-    |> User.find_user_followers(id)
-    {:ok, Actions.all(query, %{})}
-  end
-
-  def get_followers(id) do
     query = User
     |> User.join_other_users_as_followers()
     |> User.find_user_followers(id)
@@ -94,6 +89,7 @@ defmodule Recipebook.Account do
   def save_recipe(user, %{recipe_id: recipe_id} = _params) do
     with {:ok, recipe} <- Actions.find(Recipe, %{id: recipe_id}) do
       Actions.create(SavedRecipe, %{user: user, recipe: recipe})
+      {:ok ,recipe}
     else
       {_, _} -> {:error, "user or recipe not found"}
     end
@@ -102,6 +98,7 @@ defmodule Recipebook.Account do
   def unsave_recipe(user, %{recipe_id: recipe_id} = _params) do
     with {:ok, result} <- Actions.find(SavedRecipe, %{recipe_id: recipe_id, user_id: user.id}) do
       Actions.delete(result)
+      {:ok , %{message: "Successfully unsave a recipe"}}
     else
       {_, _}  -> {:error, "Recipe/User not found. Or recipe already unsaved"}
     end

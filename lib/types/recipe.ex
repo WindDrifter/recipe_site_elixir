@@ -8,10 +8,11 @@ defmodule RecipebookWeb.Types.Recipe do
     field :name, :string
     field :info, :string
     field :categories, list_of(:string)
+    field :recipe_ingredients, list_of(:recipe_ingredient), resolve: dataloader(Recipebook.Cookbook, :ingredients)
     field :user, :user
   end
 
-  object :ingredient do
+  object :recipe_ingredient do
     field :id, :id
     field :name, :string
     field :unit, :string
@@ -31,5 +32,10 @@ defmodule RecipebookWeb.Types.Recipe do
     field :number, :integer
     field :instruction, :string
   end
-
+  object :followed_recipe do
+    field :message, :string
+    field :id, :id
+    field :name, :string
+    field :info, :string
+  end
 end

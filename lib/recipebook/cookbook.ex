@@ -35,8 +35,11 @@ defmodule Recipebook.Cookbook do
       Recipebook.RecipeCounter.increment_by_one(CategoryCounter, category)
     end
 
-    def update_recipe(user, id, params) do
+    def update_recipe(user, id, params \\ %{}) do
       with {:ok, _recipe} <- Actions.find(Recipe, %{id: id, user_id: user.id}) do
+        {ingredients, params} = Map.pop(params, :ingredients, [])
+        recipe_ingredients = Enum.map(ingredients, fn ingredient -> create_or_find_ingredient(ingredient) end)
+        params = Map.put(params, :recipe_ingredients, recipe_ingredients)
         Actions.update(Recipe, id, params)
       else
         {_, _}  -> {:error, "Recipe do not exist or you do not have permission to edit it"}
@@ -44,16 +47,16 @@ defmodule Recipebook.Cookbook do
     end
 
     def create_recipe(params \\ %{}, user) do
-      # IO.inspect(user)
       {ingredients, params} = Map.pop(params, :ingredients, [])
-      recipe_ingredients = Enum.map(ingredients, fn ingredient -> create_ingredient(ingredient) end)
+      recipe_ingredients = Enum.map(ingredients, fn ingredient -> create_or_find_ingredient(ingredient) end)
       params = params
       |> Map.put(:recipe_ingredients, recipe_ingredients)
       |> Map.put(:user, user)
 
       Actions.create(Recipe, params)
     end
-    def create_ingredient(%{name: name} = params) do
+    def create_or_find_ingredient(%{name: name} = params) do
+
       {:ok, ingredient} = Actions.find_or_create(Ingredient, %{name: name})
       params
       |> Map.delete(:name)

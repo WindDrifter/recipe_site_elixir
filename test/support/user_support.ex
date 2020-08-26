@@ -30,6 +30,17 @@ defmodule Recipebook.Support.UserSupport do
     {:ok, follower}
   end
 
+  def create_an_chef_and_follow(user) do
+    {:ok, chef} = Account.create_user(%{
+      name: Faker.Person.name(),
+      email: Faker.Internet.email(),
+      username: Faker.Internet.user_name(),
+      password: Faker.String.base64()
+    })
+    Account.follow_user(user, %{id: chef.id})
+    {:ok, chef}
+  end
+
   def generate_users_and_followers(max \\ 10) do
     {:ok, user} = Account.create_user(%{
       name: Faker.Person.name(),
