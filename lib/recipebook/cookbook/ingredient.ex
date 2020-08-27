@@ -1,5 +1,6 @@
 defmodule Recipebook.Cookbook.Ingredient do
   use Ecto.Schema
+  alias Recipebook.Cookbook.Ingredient
   import Ecto.Changeset
   import Ecto.{Changeset, Query}
   alias EctoShorts.CommonChanges
@@ -17,10 +18,14 @@ defmodule Recipebook.Cookbook.Ingredient do
   @required_params [:name]
   @all_params [:info, :wiki_url | @required_params]
   def create_changeset(params) do
-    changeset(%Recipebook.Cookbook.Ingredient{}, params)
+    changeset(%Ingredient{}, params)
   end
 
-  def join_with_recipe(query \\ Recipebook.Cookbook.Ingredient) do
+  def setup_query() do
+    from(i in Ingredient, as: :ingredient)
+  end
+
+  def join_with_recipe(query \\ setup_query()) do
     query
     |> join(:inner, [i], ri in assoc(i, :recipe_ingredients), on: i.id == ri.ingredient_id, as: :recipe_ingredients)
     # |> join(:inner, [recipe_ingredients: ri], r in assoc(ri, :recipe), as: :recipe)
@@ -35,9 +40,8 @@ defmodule Recipebook.Cookbook.Ingredient do
   def changeset(ingredients, attrs) do
     ingredients
     |> cast(attrs, @all_params)
-    |> CommonChanges.put_or_cast_assoc(:recipe_ingredients)
     |> validate_required(@required_params)
-    |> CommonChanges.preload_changeset_assoc(:recipe_ingredients)
+    |> CommonChanges.preload_change_assoc(:recipe_ingredients)
     |> unique_constraint(:name)
   end
 end

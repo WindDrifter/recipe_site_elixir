@@ -1,17 +1,15 @@
 defmodule Recipebook.AccountTest do
   use Recipebook.DataCase, async: true
-
   alias Recipebook.Account
   alias Recipebook.Support.UserSupport
   alias Recipebook.Support.RecipeSupport
-  alias Recipebook.Account.Guardian
 
   def setup_user(context) do
-    {_, user} = UserSupport.generate_user
+    {:ok, user} = UserSupport.generate_user
     Map.put(context, :user, user)
   end
-  def setup_user_raw_data(context) do
-    {_, user} = UserSupport.generate_user_raw_data
+  def setup_user_with_password(context) do
+    {:ok, user} = UserSupport.generate_user_raw_data
     Map.put(context, :user, user)
   end
   def setup_user_and_following(context) do
@@ -46,25 +44,12 @@ defmodule Recipebook.AccountTest do
       assert {:error, _} = Account.find_user(%{username: "aaaaaaaaaaaaaa"})
     end
   end
-  describe "&login_user/1" do
-    setup [:setup_user_raw_data]
-    test "correct password and return token" , context do
-      user = context[:user]
-      assert {:ok, data} = Account.login_user(%{username: user.username, password: user.password})
-      assert data.token
-      {:ok, decoded_token} = Guardian.decode_and_verify(data.token)
-      assert to_string(decoded_token["sub"]) === to_string(user.id)
-    end
-    test "wrong password and return error" , context do
-      user = context[:user]
-      assert {:error, _} = Account.login_user(%{username: user.username, password: "12345"})
-    end
-  end
+
   describe "&follow_user/1" do
     setup [:setup_user]
     test "successfully follow user if user exist" , context do
       user = context[:user]
-      {_, followed_user} = UserSupport.generate_user
+      {:ok, followed_user} = UserSupport.generate_user
 
       assert {:ok, _} = Account.follow_user(user, %{id: followed_user.id})
     end
@@ -74,11 +59,11 @@ defmodule Recipebook.AccountTest do
     end
   end
   describe "&update_user/3" do
-    setup [:setup_user]
+    setup [:setup_user_with_password]
     test "successfully update details user update own account" , context do
       user = context[:user]
       original_email = user.email
-      assert {:ok, result} = Account.update_user(user, user.id, %{email: "aaaaaa@bbbbb.com"})
+      assert {:ok, result} = Account.update_user(user, user.id, %{current_password: user.password, email: "aaaaaa@bbbbb.com"})
       assert {:ok, return_user} = Account.find_user(%{id: user.id})
       assert result.email === "aaaaaa@bbbbb.com"
       assert return_user.email === "aaaaaa@bbbbb.com"
@@ -86,8 +71,8 @@ defmodule Recipebook.AccountTest do
     end
     test "fail if tried to update someone else's account" , context do
       user = context[:user]
-      {_, another_user} = UserSupport.generate_user
-      assert {:error, _} = Account.update_user(user, another_user.id, %{email: "aaaaaa@bbbbb.com"})
+      {:ok, another_user} = UserSupport.generate_user
+      assert {:error, _} = Account.update_user(user, another_user.id, %{current_password: user.password, email: "aaaaaa@bbbbb.com"})
     end
   end
 
@@ -131,7 +116,7 @@ defmodule Recipebook.AccountTest do
     test "return error if recipe not found", context do
       user = context[:user]
       assert {:error, message} = Account.unsave_recipe(user, %{recipe_id: "000011"})
-      assert message =~ "not found"
+      assert message =~ "no records found"
 
     end
   end

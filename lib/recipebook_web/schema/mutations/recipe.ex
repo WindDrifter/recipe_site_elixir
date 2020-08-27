@@ -3,7 +3,7 @@ defmodule RecipebookWeb.Schema.Mutations.Recipe do
   object :recipe_mutations do
 
     field :create_recipe, :recipe do
-      arg :name, :string
+      arg :name, non_null(:string)
       arg :ingredients, non_null(list_of(non_null(:input_ingredient)))
       arg :steps, non_null(list_of(non_null(:input_step)))
       arg :categories, non_null(list_of(non_null(:string)))

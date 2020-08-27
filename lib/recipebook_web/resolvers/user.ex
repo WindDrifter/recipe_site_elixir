@@ -58,8 +58,5 @@ defmodule RecipebookWeb.Resolvers.User do
     def unsave_recipe(params, %{context: %{current_user: current_user}}) do
       Account.unsave_recipe(current_user, params)
     end
-    def login_user(params, _) do
-      Account.login_user(params)
-    end
 
   end

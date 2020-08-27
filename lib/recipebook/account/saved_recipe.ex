@@ -2,7 +2,7 @@ defmodule Recipebook.Account.SavedRecipe do
   use Ecto.Schema
   import Ecto.{Changeset, Query}
   alias EctoShorts.CommonChanges
-
+  alias Recipebook.Account.SavedRecipe
   schema "saved_recipes" do
     belongs_to :user, Recipebook.Account.User
     belongs_to :recipe, Recipebook.Cookbook.Recipe
@@ -11,7 +11,11 @@ defmodule Recipebook.Account.SavedRecipe do
   end
 
   def create_changeset(params) do
-    changeset(%Recipebook.Account.SavedRecipe{}, params)
+    changeset(%SavedRecipe{}, params)
+  end
+
+  def setup_query() do
+    from(sr in SavedRecipe, as: :saved_recipe)
   end
   @doc false
   def changeset(saved_recipe, attrs) do

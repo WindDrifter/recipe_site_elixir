@@ -10,13 +10,6 @@ defmodule RecipebookWeb.Schema.Mutations.User do
       arg :password, non_null(:string)
       resolve &RecipebookWeb.Resolvers.User.create_user/2
     end
-
-    field :login_user, :user_token do
-      arg :username, :string
-      arg :password, :string
-      resolve &RecipebookWeb.Resolvers.User.login_user/2
-    end
-
     # The mutations belows here require current_user context
 
     @desc "allow update of user info"
@@ -25,6 +18,7 @@ defmodule RecipebookWeb.Schema.Mutations.User do
       arg :name, :string
       arg :username, :string
       arg :email, :string
+      arg :current_password, non_null(:string)
       arg :password, :string
       resolve &RecipebookWeb.Resolvers.User.update_user/2
     end
@@ -41,7 +35,8 @@ defmodule RecipebookWeb.Schema.Mutations.User do
       resolve &RecipebookWeb.Resolvers.User.unfollow_user/2
     end
 
-    # Why save recipe is in user area? Since it's user is the one that saving recipes
+    # Why save recipe is in user area?
+    # Since it's user is the one that saving recipes
     # not recipe saving user.
     @desc "Allow user to save a recipe via recipe id, the current user is provided by context"
     field :save_recipe, :followed_recipe do

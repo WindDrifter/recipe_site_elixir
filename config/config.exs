@@ -18,7 +18,7 @@ config :recipebook, RecipebookWeb.Endpoint,
   pubsub_server: Recipebook.PubSub,
   live_view: [signing_salt: "X4MO4Ihq"]
 
-config :recipebook, Recipebook.Account.Guardian,
+config :recipebook, Recipebook.Authentication,
   issuer: "recipebook",
   # user an env for production, for now just use this secret key for development
   secret_key: "DNQtmshsFDhSKrFE7FGv33oS7nE99JEJ6s9kFwglB19AlHc9YXkD5Ziqmr5GSCne"

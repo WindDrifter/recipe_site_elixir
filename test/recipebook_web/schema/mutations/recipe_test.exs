@@ -24,7 +24,7 @@ defmodule RecipebookWeb.Schema.Mutations.RecipeTest do
   """
 
   def setup_user(context) do
-    {_, user} = UserSupport.generate_user
+    {:ok, user} = UserSupport.generate_user
     Map.put(context, :user, user)
   end
 
@@ -46,7 +46,7 @@ defmodule RecipebookWeb.Schema.Mutations.RecipeTest do
     test "not able to create recipe if an important arg is missing", context do
       user = context[:user]
       raw_recipe = RecipeSupport.generate_raw_recipe()
-      {_, raw_recipe} = Map.pop(raw_recipe, "categories")
+      {_categories, raw_recipe} = Map.pop(raw_recipe, "categories")
       assert {:ok, %{errors: errors}} = Absinthe.run(@create_recipe_doc, Schema,
         [variables: raw_recipe, context: %{current_user: user}]
       )

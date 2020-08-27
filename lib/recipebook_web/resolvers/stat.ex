@@ -1,24 +1,24 @@
 defmodule RecipebookWeb.Resolvers.Stat do
-  alias Recipebook.Stats
+  alias Recipebook.RecipeViewStats
 
-  def all(%{is_category: is_category, top: top}, _) do
-    Stats.get_stats(is_category, top)
+  def all(%{is_category: category?, top: top}, _) do
+    RecipeViewStats.get_stats(category?, top)
   end
 
-  def all(%{is_category: is_category}, _) do
-    Stats.get_stats(is_category, 3)
+  def all(%{is_category: category?}, _) do
+    RecipeViewStats.get_stats(category?, 3)
   end
 
   def all(%{top: top}, _) do
-    Stats.get_stats(top)
+    RecipeViewStats.get_stats(top)
   end
 
   def all(params, _) when params == %{} do
-    Stats.get_stats(3)
+    RecipeViewStats.get_stats(3)
   end
 
   def find_by_categories(%{categories: categories}, _) do
-    Stats.get_certain_categories_stats(categories)
+    RecipeViewStats.get_certain_categories_stats(categories)
   end
 
 end

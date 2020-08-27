@@ -26,7 +26,7 @@ defmodule RecipebookWeb.Schema.Queries.UserTest do
     UserSupport.generate_users_with_random_name
   end
   def setup_user(context) do
-    {_, user} = UserSupport.generate_user
+    {:ok, user} = UserSupport.generate_user
     Map.put(context, :user, user)
   end
 

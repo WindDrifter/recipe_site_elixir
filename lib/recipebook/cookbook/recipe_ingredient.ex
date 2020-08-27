@@ -1,6 +1,6 @@
 defmodule Recipebook.Cookbook.RecipeIngredient do
   use Ecto.Schema
-  import Ecto.{Changeset, Query}
+  import Ecto.Changeset
   alias EctoShorts.CommonChanges
   alias Recipebook.Cookbook.{Recipe, Ingredient}
   schema "recipe_ingredients" do
@@ -20,10 +20,8 @@ defmodule Recipebook.Cookbook.RecipeIngredient do
   def changeset(ingredient, attrs) do
     ingredient
     |> cast(attrs, @all_params)
-    |> CommonChanges.preload_changeset_assoc(:recipe)
-    |> CommonChanges.preload_changeset_assoc(:ingredient)
-    |> CommonChanges.put_or_cast_assoc(:recipe)
-    |> CommonChanges.put_or_cast_assoc(:ingredient)
+    |> CommonChanges.preload_change_assoc(:recipe)
+    |> CommonChanges.preload_change_assoc(:ingredient)
     |> validate_required(@required_params)
   end
 end

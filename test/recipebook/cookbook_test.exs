@@ -6,7 +6,7 @@ defmodule Recipebook.CookbookTest do
     alias Recipebook.Cookbook
 
     def setup_user(context) do
-      {_, user} = UserSupport.generate_user
+      {:ok, user} = UserSupport.generate_user
       Map.put(context, :user, user)
     end
 
@@ -72,7 +72,7 @@ defmodule Recipebook.CookbookTest do
 
       test "get all recipes ", context do
         recipes = context[:output].recipes
-        {_, user} = UserSupport.generate_user
+        {:ok, user} = UserSupport.generate_user
         # generate more recipes for testing
         other_recipes_set = RecipeSupport.generate_recipes(user)
         assert {:ok, returned_recipes} = Cookbook.all_recipes()
@@ -111,12 +111,13 @@ defmodule Recipebook.CookbookTest do
         user = context[:user]
         {:ok, recipe} = RecipeSupport.generate_recipe(user)
         new_recipe = %{
+          id: recipe.id,
           name: Faker.Food.dish(),
           ingredients: RecipeSupport.generate_ingredients(6),
           categories: ["Soup", "dinner", "lunch"],
           steps: RecipeSupport.generate_steps(10)
         }
-        assert {:ok, result} = Cookbook.update_recipe(user, recipe.id, new_recipe)
+        assert {:ok, result} = Cookbook.update_recipe(user, new_recipe)
         assert Enum.count(result.recipe_ingredients) === Enum.count(new_recipe.ingredients)
         assert Enum.count(result.steps) === Enum.count(new_recipe.steps)
         assert Enum.count(result.categories) === Enum.count(new_recipe.categories)
@@ -129,12 +130,13 @@ defmodule Recipebook.CookbookTest do
         {:ok, another_user} = UserSupport.generate_user
         {:ok, recipe} = RecipeSupport.generate_recipe(another_user)
         new_recipe =  %{
+          id: recipe.id,
           name: Faker.Food.dish(),
           ingredients: RecipeSupport.generate_ingredients(),
           categories: ["comfort food", "breakfast", "lunch"],
           steps: RecipeSupport.generate_steps()
         }
-        assert {:error, message} = Cookbook.update_recipe(user, recipe.id, new_recipe)
+        assert {:error, message} = Cookbook.update_recipe(user, new_recipe)
         assert message =~ "do not exist"
       end
 

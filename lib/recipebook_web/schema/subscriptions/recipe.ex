@@ -7,9 +7,7 @@ defmodule RecipebookWeb.Schema.Subscriptions.Recipe do
       trigger :create_recipe, topic: fn value ->
         value.user.id
       end
-      config fn args, _ ->
-        {:ok, topic: args.user_ids }
-      end
+      config &RecipebookWeb.Resolvers.Recipe.create_recipe_topic/2
     end
   end
 end

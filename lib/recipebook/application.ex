@@ -16,8 +16,8 @@ defmodule Recipebook.Application do
       RecipebookWeb.Endpoint,
       {Phoenix.PubSub, [name: Recipebook.PubSub, adapter: Phoenix.PubSub.PG2]},
       {Absinthe.Subscription, RecipebookWeb.Endpoint},
-      Supervisor.child_spec(Recipebook.RecipeCounter, id: :recipe_counter),
-      Supervisor.child_spec({Recipebook.RecipeCounter, name: CategoryCounter}, id: :category_counter)
+      {Recipebook.RecipeCounter, name: CategoryCounter},
+      Recipebook.RecipeCounter,
       # Start a worker by calling: Recipebook.Worker.start_link(arg)
       # {Recipebook.Worker, arg}
     ]

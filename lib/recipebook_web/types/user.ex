@@ -7,11 +7,6 @@ defmodule RecipebookWeb.Types.User do
     field :email, :string
   end
 
-  object :user_token do
-    field :username, :string
-    field :token, :string
-  end
-
   object :followed_user do
     field :message, :string
     field :name, :string

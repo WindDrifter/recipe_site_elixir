@@ -2,7 +2,7 @@ defmodule RecipebookWeb.Context do
   @behaviour Plug
   import Plug.Conn
   alias Recipebook.{Account}
-  alias Recipebook.Account.Guardian
+  alias Recipebook.Authentication
   def init(opts), do: opts
 
   def call(conn, _) do
@@ -19,7 +19,7 @@ defmodule RecipebookWeb.Context do
     end
   end
   defp authorize(token) do
-    with {:ok, decoded_token} <- Guardian.decode_and_verify(token) do
+    with {:ok, decoded_token} <- Authentication.decode_and_verify(token) do
       Account.find_user(%{id: decoded_token["sub"]})
     else
       _ -> {:error, "Invalid token"}

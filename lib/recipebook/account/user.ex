@@ -2,6 +2,8 @@ defmodule Recipebook.Account.User do
   import Argon2
   import Ecto.{Changeset, Query}
   alias EctoShorts.CommonChanges
+  alias Recipebook.Account.{User, SavedRecipe, FollowingUser}
+  alias Recipebook.Cookbook.Recipe
 
   use Ecto.Schema
   schema "users" do
@@ -9,49 +11,45 @@ defmodule Recipebook.Account.User do
     field :name, :string
     field :password, :string
     field :username, :string
-    has_many :recipes, Recipebook.Cookbook.Recipe
-    many_to_many :users, Recipebook.Account.User, join_through: Recipebook.Account.FollowingUser, join_keys: [user_id: :id, following_user_id: :id]
-    has_many :saved_recipes, Recipebook.Account.SavedRecipe
+    has_many :recipes, Recipe
+    many_to_many :following, User, join_through: FollowingUser, join_keys: [user_id: :id, following_user_id: :id]
+    many_to_many :followers, User, join_through: FollowingUser, join_keys: [following_user_id: :id, user_id: :id]
+    many_to_many :saved_recipes, Recipe, join_through: SavedRecipe
     timestamps()
   end
 
   @required_fields [:email, :name, :username, :password]
   @available_fields [:id | @required_fields]
   #
+  def create_changeset(params) do
+    changeset(%User{}, params)
+  end
 
-  def by_name(query \\ Recipebook.Account.User, name) do
+  def by_name(query \\ setup_query(), name) do
     search = "%#{name}%"
     from(u in query, where: ilike(u.name, ^search))
   end
-  def by_username(query \\ Recipebook.Account.User, username) do
+
+  def by_username(query \\ setup_query(), username) do
     search = "%#{username}%"
     from(u in query, where: ilike(u.username, ^search))
   end
 
-
-  def find_user_followers(query \\ Recipebook.Account.User, id) do
-    where(query, [followed: f], f.id == ^id)
-  end
-
-  def join_other_users_as_followers(query \\ Recipebook.Account.User) do
-    join(query, :inner, [u], f in assoc(u, :users), as: :followed)
-  end
-
-  def create_changeset(params) do
-    changeset(%Recipebook.Account.User{}, params)
+  def setup_query() do
+    from(u in User, as: :user)
   end
 
   @doc false
   def changeset(user, attrs) do
     user
     |> cast(attrs, @available_fields)
+    |> CommonChanges.preload_change_assoc(:followers)
+    |> CommonChanges.preload_change_assoc(:following)
+    |> CommonChanges.preload_change_assoc(:saved_recipes)
     |> validate_required(@required_fields)
     |> put_pass_hash
     |> unique_constraint(:email)
     |> unique_constraint(:username)
-    |> CommonChanges.preload_change_assoc(:users)
-    |> CommonChanges.preload_change_assoc(:saved_recipes)
-
   end
 
   defp put_pass_hash(%Ecto.Changeset{changes:

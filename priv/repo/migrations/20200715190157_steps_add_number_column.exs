@@ -2,10 +2,10 @@ defmodule Recipebook.Repo.Migrations.StepsAddNumberColumn do
   use Ecto.Migration
 
   def change do
-    alter table("steps") do
+    alter table("recipe_steps") do
       add :number, :integer
     end
-    create index(:steps, [:number])
+    create index(:recipe_steps, [:number])
 
   end
 end

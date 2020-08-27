@@ -1,6 +1,6 @@
 defmodule Recipebook.Account.FollowingUser do
   use Ecto.Schema
-  import Ecto.Changeset
+  import Ecto.{Changeset, Query}
 
   schema "following_users" do
     belongs_to :user, Recipebook.Account.User
@@ -9,6 +9,10 @@ defmodule Recipebook.Account.FollowingUser do
   end
   def create_changeset(params) do
     changeset(%Recipebook.Account.FollowingUser{}, params)
+  end
+
+  def setup_query() do
+    from(fou in Recipebook.Account.FollowingUser, as: :following_user)
   end
   @doc false
   def changeset(follow, attrs) do

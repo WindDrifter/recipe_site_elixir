@@ -1,46 +1,44 @@
 defmodule Recipebook.Account do
   alias Recipebook.Account.{User, SavedRecipe, FollowingUser}
   alias Recipebook.Cookbook.Recipe
-
+  alias Recipebook.Authentication
   alias EctoShorts.Actions
-  import Argon2
-  import Ecto.{Changeset, Query}
-
+  @user_query User.setup_query()
+  @saved_recipe_query SavedRecipe.setup_query()
+  @cannot_find_user_tuple {:error, "Cannot find user"}
   def follow_user(user, %{id: id} = _params) do
-    with {:ok, followed_user} <- find_user(%{id: id}) do
-      Actions.create(FollowingUser, %{user_id: user.id, following_user_id: id})
-      {:ok, %{message: "Successfully followed user", followed_user: user.name}}
-    else
-      {_, _} -> {:error, "User does not exist"}
+    case find_user(%{id: id}) do
+      {:ok, _followed_user} ->
+        Actions.create(FollowingUser, %{user_id: user.id, following_user_id: id})
+        {:ok, %{message: "Successfully followed user", followed_user: user.name}}
+      {:error, _} -> @cannot_find_user_tuple
     end
   end
   def unfollow_user(user, %{id: id} = _params) do
-    with {:ok, result} <- Actions.find(FollowingUser, %{following_user_id: id, user_id: user.id}) do
-      {:ok, _} = Actions.delete(result)
+    with {:ok, result} <- Actions.find(FollowingUser.setup_query(), %{following_user_id: id, user_id: user.id}),
+          {:ok, _} = Actions.delete(result) do
       {:ok, %{message: "Succuessfully unfollow user"}}
     else
-      {_, _}  -> {:error, "User does not exist"}
+      {:error, _}  -> @cannot_find_user_tuple
     end
   end
   def all_users(params \\ %{}) do
     {search, params} = Map.split(params, [:name, :username])
-    query = Enum.reduce(search, User, &convert_field_to_query/2)
+    query = Enum.reduce(search, @user_query, &convert_field_to_query/2)
     {:ok, Actions.all(query, params)}
   end
 
-  def get_followers(%{id: id} = _params) do
-    query = User
-    |> User.join_other_users_as_followers()
-    |> User.find_user_followers(id)
-    {:ok, Actions.all(query, %{})}
+  def get_followers(params) do
+    case find_user(add_preload_in_params(params, [:followers])) do
+      {:ok, user} -> {:ok, user.followers}
+      {:error, _} -> {:error, "Cannot find user"}
+    end
   end
 
   def get_following(params) do
-    query = preload(User, [:users])
-    with {:ok, user} <- Actions.find(query, params) do
-      {:ok, user.users}
-    else
-      {_, _} -> {:error, "User not found"}
+    case find_user(add_preload_in_params(params, [:following])) do
+      {:ok, user} ->  {:ok, user.following}
+      {:error, _} -> @cannot_find_user_tuple
     end
   end
 
@@ -51,30 +49,15 @@ defmodule Recipebook.Account do
   defp convert_field_to_query({:username, value}, query) do
     User.by_username(query, value)
   end
-  def login_user(params \\ %{}) do
-    with {:ok, user} <- verify_user(params),
-         {:ok, jwt, _} <- Recipebook.Account.Guardian.encode_and_sign(user) do
-      {:ok, %{token: jwt}}
-    else
-      {_, _} ->
-        {:error, "wrong password or invalid username"}
-    end
-  end
-  defp verify_user(%{password: input_password, username: input_username} = _params) do
-
-    {:ok, user} = Actions.find(User, %{username: input_username})
-    check_pass(user, input_password, hash_key: :password)
-  end
 
   def find_user(params \\ %{}) do
-    Actions.find(User, params)
+    Actions.find(@user_query, params)
   end
 
-  def update_user(user, id ,params) do
-    if user.id === id do
-      Actions.update(User, id, params)
-    else
-      {:error, "You do not have permission to edit the user data"}
+  def update_user(user, id, %{current_password: current_password} = params) do
+    case Authentication.verify_user(%{username: user.username, password: current_password}) do
+      {:ok, _user} -> if user.id === id do Actions.update(User, id, params) else {:error, "You do not have permission to change user details"} end
+      {:error, reason} -> {:error, reason.message}
     end
   end
 
@@ -82,27 +65,31 @@ defmodule Recipebook.Account do
     Actions.create(User, params)
   end
   def get_saved_recipes(user) do
-    query = preload(SavedRecipe, :recipe)
-    {:ok, Actions.all(query, %{user_id: user.id})}
+    {:ok, Actions.all(@saved_recipe_query, %{user_id: user.id, preload: [:recipe]})}
   end
 
   def save_recipe(user, %{recipe_id: recipe_id} = _params) do
-    with {:ok, recipe} <- Actions.find(Recipe, %{id: recipe_id}) do
-      Actions.create(SavedRecipe, %{user: user, recipe: recipe})
+    with {:ok, recipe} <- Actions.find(Recipe.setup_query(), %{id: recipe_id}),
+      {:ok, _} <-Actions.create(SavedRecipe, %{user: user, recipe: recipe})
+    do
       {:ok ,recipe}
     else
-      {_, _} -> {:error, "user or recipe not found"}
+      {:error, _} -> {:error, "user or recipe not found"}
     end
   end
 
   def unsave_recipe(user, %{recipe_id: recipe_id} = _params) do
-    with {:ok, result} <- Actions.find(SavedRecipe, %{recipe_id: recipe_id, user_id: user.id}) do
-      Actions.delete(result)
+    with {:ok, result} <- Actions.find(@saved_recipe_query, %{recipe_id: recipe_id, user_id: user.id}),
+        {:ok, _} <- Actions.delete(result)
+    do
       {:ok , %{message: "Successfully unsave a recipe"}}
     else
-      {_, _}  -> {:error, "Recipe/User not found. Or recipe already unsaved"}
+      {:error, reason}  -> {:error, reason.message}
     end
   end
 
+  defp add_preload_in_params(params, keys) do
+    Map.put(params, :preload, keys)
+  end
 
 end

@@ -11,7 +11,7 @@ defmodule RecipeCounterTest do
       assert is_tuple(RecipeCounter.get_current_state_by_key(pid, "Chinese"))
      end
     test "returns 0 as default non existance key", %{pid: pid} do
-     {_, state} = RecipeCounter.get_current_state_by_key(pid, "Chinese")
+     {:ok, state} = RecipeCounter.get_current_state_by_key(pid, "Chinese")
      assert state === 0
     end
   end
@@ -19,9 +19,9 @@ defmodule RecipeCounterTest do
   describe  "&increment_by_one/2" do
     test "assert only the related key added by 1" , %{pid: pid} do
       RecipeCounter.increment_by_one(pid, "Chinese")
-      {_, state} = RecipeCounter.get_current_state_by_key(pid, "Chinese")
+      {:ok, state} = RecipeCounter.get_current_state_by_key(pid, "Chinese")
       assert state === 1
-      {_, state} = RecipeCounter.get_current_state_by_key(pid, "Japanese")
+      {:ok, state} = RecipeCounter.get_current_state_by_key(pid, "Japanese")
       assert state === 0
     end
   end
