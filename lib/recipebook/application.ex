@@ -16,8 +16,8 @@ defmodule Recipebook.Application do
       RecipebookWeb.Endpoint,
       {Phoenix.PubSub, [name: Recipebook.PubSub, adapter: Phoenix.PubSub.PG2]},
       {Absinthe.Subscription, RecipebookWeb.Endpoint},
-      {Recipebook.RecipeCounter, name: CategoryCounter},
-      Recipebook.RecipeCounter,
+      {Recipebook.RecipeViewCounter, name: CategoryViewCounter},
+      Recipebook.RecipeViewCounter,
       # Start a worker by calling: Recipebook.Worker.start_link(arg)
       # {Recipebook.Worker, arg}
     ]

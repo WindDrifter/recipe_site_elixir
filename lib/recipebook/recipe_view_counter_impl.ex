@@ -1,4 +1,4 @@
-defmodule Recipebook.RecipeViewStatisticsImpl  do
+defmodule Recipebook.RecipeViewCounterImpl  do
 
   def get_top_n_with_most_views(state, amount \\ 3) do
     state

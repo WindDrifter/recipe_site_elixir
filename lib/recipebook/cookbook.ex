@@ -1,7 +1,7 @@
 defmodule Recipebook.Cookbook do
   alias Recipebook.Cookbook.{Recipe, Ingredient}
   alias EctoShorts.{Actions}
-  alias Recipebook.RecipeCounter
+  alias Recipebook.RecipeViewCounter
 
   @recipe_query Recipe.setup_query()
   def all_recipes(params \\ %{}) do
@@ -16,7 +16,7 @@ defmodule Recipebook.Cookbook do
     case Actions.find(@recipe_query, add_preload_in_params(params, [:user, :steps, :ingredients])) do
       {:ok, recipe} ->
       # I have to increase stats whenever a reciped id is called
-      RecipeCounter.increment_by_one(recipe.name)
+      RecipeViewCounter.increment_by_one(recipe.name)
       Enum.map(recipe.categories, fn category -> add_recipe_category_stats(category) end)
       {:ok, recipe}
       {:error, _} -> {:error, "Cannot find recipe"}
@@ -33,7 +33,7 @@ defmodule Recipebook.Cookbook do
   end
 
   defp add_recipe_category_stats(category) do
-    RecipeCounter.increment_by_one(CategoryCounter, category)
+    RecipeViewCounter.increment_by_one(CategoryViewCounter, category)
   end
 
   def update_recipe(user, %{id: id} = params \\ %{}) do

@@ -1,6 +1,6 @@
-defmodule Recipebook.RecipeCounter do
+defmodule Recipebook.RecipeViewCounter do
   use Agent
-  @default_name Recipebook.RecipeCounter
+  @default_name Recipebook.RecipeViewCounter
 
   def start_link(opts \\ []) do
     initial_state = %{}
@@ -11,8 +11,8 @@ defmodule Recipebook.RecipeCounter do
   # For no name
   def child_spec([]) do
     %{
-      id: Recipebook.RecipeCounter,
-      start: {Recipebook.RecipeCounter, :start_link, []}
+      id: Recipebook.RecipeViewCounter,
+      start: {Recipebook.RecipeViewCounter, :start_link, []}
     }
   end
 
@@ -20,12 +20,12 @@ defmodule Recipebook.RecipeCounter do
   def child_spec(opts) when opts !== [] do
     %{
       id: opts[:name],
-      start: {Recipebook.RecipeCounter, :start_link, [opts]}
+      start: {Recipebook.RecipeViewCounter, :start_link, [opts]}
     }
   end
 
   def increment_by_one(name \\ @default_name, key) do
-    Agent.update(name, fn state -> Recipebook.RecipeViewStatisticsImpl.add_one_view(state, key) end)
+    Agent.update(name, fn state -> Recipebook.RecipeViewCounterImpl.add_one_view(state, key) end)
   end
 
   def get_current_state_by_key(name \\ @default_name, key) do
@@ -33,7 +33,7 @@ defmodule Recipebook.RecipeCounter do
   end
 
   def get_top(name \\ @default_name, amount) do
-    Agent.get(name, fn state -> {:ok, Recipebook.RecipeViewStatisticsImpl.get_top_n_with_most_views(state, amount)} end)
+    Agent.get(name, fn state -> {:ok, Recipebook.RecipeViewCounterImpl.get_top_n_with_most_views(state, amount)} end)
   end
 
   def get_current_state(name \\ @default_name) do

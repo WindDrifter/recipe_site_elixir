@@ -64,6 +64,7 @@ defmodule Recipebook.Account do
   def create_user(params) do
     Actions.create(User, params)
   end
+  @spec get_saved_recipes(atom | %{id: any}) :: {:ok, any}
   def get_saved_recipes(user) do
     {:ok, Actions.all(@saved_recipe_query, %{user_id: user.id, preload: [:recipe]})}
   end

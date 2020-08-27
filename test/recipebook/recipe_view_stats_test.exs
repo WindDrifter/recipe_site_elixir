@@ -1,14 +1,14 @@
 defmodule Recipebook.RecipeViewStatsTest do
   use ExUnit.Case, async: true
-  alias Recipebook.RecipeCounter
+  alias Recipebook.RecipeViewCounter
   alias Recipebook.RecipeViewStats
   alias Recipebook.Support.StatSupport
   @categories ["Chinese", "Japanese", "Italian", "Comfort food", "Fusion", "French"]
   @recipes ["grill cheese", "Pizza", "Ramen", "Ice cream"]
 
   setup_all do
-    Enum.map(@categories, fn category -> RecipeCounter.increment_by_one(CategoryCounter, category) end)
-    Enum.map(@recipes, fn recipe -> RecipeCounter.increment_by_one(recipe) end)
+    Enum.map(@categories, fn category -> RecipeViewCounter.increment_by_one(CategoryViewCounter, category) end)
+    Enum.map(@recipes, fn recipe -> RecipeViewCounter.increment_by_one(recipe) end)
     :ok
   end
   describe "&get_stats/2" do

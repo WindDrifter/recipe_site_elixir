@@ -3,14 +3,14 @@ defmodule RecipebookWeb.Schema.Queries.StatTest do
   use ExUnit.Case, async: true
 
   alias RecipebookWeb.Schema
-  alias Recipebook.RecipeCounter
+  alias Recipebook.RecipeViewCounter
   alias Recipebook.Support.StatSupport
 
   setup_all do
     categories = ["Chinese", "Japanese", "Italian", "Comfort food", "Fusion", "French"]
-    Enum.map(categories, fn category -> RecipeCounter.increment_by_one(CategoryCounter, category) end)
+    Enum.map(categories, fn category -> RecipeViewCounter.increment_by_one(CategoryViewCounter, category) end)
     recipes = ["grill cheese", "Pizza", "Ramen", "Ice cream", "Roast duck", "Smoothie"]
-    Enum.map(recipes, fn recipe -> RecipeCounter.increment_by_one(recipe) end)
+    Enum.map(recipes, fn recipe -> RecipeViewCounter.increment_by_one(recipe) end)
     :ok
   end
   @get_stats_doc """
