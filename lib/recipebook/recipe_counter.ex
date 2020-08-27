@@ -8,6 +8,7 @@ defmodule Recipebook.RecipeCounter do
     Agent.start_link(fn -> initial_state end, opts)
   end
 
+  # For no name
   def child_spec([]) do
     %{
       id: Recipebook.RecipeCounter,
@@ -15,6 +16,7 @@ defmodule Recipebook.RecipeCounter do
     }
   end
 
+  # When opts is not empty
   def child_spec(opts) when opts !== [] do
     %{
       id: opts[:name],
