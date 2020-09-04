@@ -1,5 +1,5 @@
 defmodule RecipebookWeb.Resolvers.Stat do
-  alias Recipebook.RecipeViewStats
+  alias Recipebook.ViewStats.RecipeViewStats
 
   def all(%{is_category: category?, top: top}, _) do
     RecipeViewStats.get_stats(category?, top)

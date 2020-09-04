@@ -1,7 +1,7 @@
 defmodule Recipebook.RecipeViewStatsTest do
   use ExUnit.Case, async: true
-  alias Recipebook.RecipeViewCounter
-  alias Recipebook.RecipeViewStats
+  alias Recipebook.ViewStats.RecipeViewCounter
+  alias Recipebook.ViewStats.RecipeViewStats
   alias Recipebook.Support.StatSupport
   @categories ["Chinese", "Japanese", "Italian", "Comfort food", "Fusion", "French"]
   @recipes ["grill cheese", "Pizza", "Ramen", "Ice cream"]

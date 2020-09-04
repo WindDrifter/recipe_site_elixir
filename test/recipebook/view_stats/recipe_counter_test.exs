@@ -1,6 +1,6 @@
 defmodule RecipeViewCounterTest do
   use ExUnit.Case, async: true
-  alias Recipebook.RecipeViewCounter
+  alias Recipebook.ViewStats.RecipeViewCounter
   setup do
     {:ok, pid} = RecipeViewCounter.start_link(name: nil)
     %{pid: pid}

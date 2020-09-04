@@ -152,7 +152,7 @@ defmodule RecipebookWeb.Schema.Mutations.UserTest do
       user = context[:user]
       assert {:ok, errors} = Absinthe.run(@follow_user_doc, Schema,
       [variables: %{"id" => "11111111"}, context: %{current_user: user}])
-      assert Map.get(List.first(errors.errors),:message) =~ "Cannot find"
+      assert Map.get(List.first(errors.errors),:message) =~ "no records found"
     end
   end
   describe "@unfollowUser" do
@@ -162,7 +162,7 @@ defmodule RecipebookWeb.Schema.Mutations.UserTest do
       {:ok, another_user} = UserSupport.create_an_chef_and_follow(user)
       assert {:ok, data} = Absinthe.run(@unfollow_user_doc, Schema,
       [variables: %{"id" => another_user.id}, context: %{current_user: user}])
-      assert data.data["unfollowUser"]["message"] =~ "Succuessfully unfollow user"
+      assert data.data["unfollowUser"]["message"] =~ "Successfully unfollow user"
     end
   end
   describe "@saveRecipe" do
@@ -190,12 +190,12 @@ defmodule RecipebookWeb.Schema.Mutations.UserTest do
       {:ok, _} = Account.save_recipe(user, %{recipe_id: recipe.id})
       {:ok, saved_recipes} = Account.get_saved_recipes(user)
       original_count = Enum.count(saved_recipes)
+      assert original_count === 1
       assert {:ok, data} = Absinthe.run(@unsave_recipe_doc, Schema,
       [variables: %{"recipe_id" => recipe.id}, context: %{current_user: user}])
-      assert {:ok, found_user} = Account.find_user(%{id: user.id})
-      {:ok, saved_recipes} = Account.get_saved_recipes(found_user)
       assert data.data["unsaveRecipe"]["message"] =~ "Successfully unsave"
-      assert Enum.count(saved_recipes) === original_count-1
+      {:ok, new_list} = Account.get_saved_recipes(user)
+      assert Enum.count(new_list) === (original_count-1)
     end
   end
 end

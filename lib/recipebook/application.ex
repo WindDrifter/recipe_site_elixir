@@ -2,7 +2,7 @@ defmodule Recipebook.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
-
+  alias Recipebook.ViewStats.RecipeViewCounter
   use Application
 
   def start(_type, _args) do
@@ -16,8 +16,8 @@ defmodule Recipebook.Application do
       RecipebookWeb.Endpoint,
       {Phoenix.PubSub, [name: Recipebook.PubSub, adapter: Phoenix.PubSub.PG2]},
       {Absinthe.Subscription, RecipebookWeb.Endpoint},
-      {Recipebook.RecipeViewCounter, name: CategoryViewCounter},
-      Recipebook.RecipeViewCounter,
+      {RecipeViewCounter, name: CategoryViewCounter},
+      RecipeViewCounter,
       # Start a worker by calling: Recipebook.Worker.start_link(arg)
       # {Recipebook.Worker, arg}
     ]

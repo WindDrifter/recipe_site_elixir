@@ -1,7 +1,7 @@
 defmodule Recipebook.Cookbook do
   alias Recipebook.Cookbook.{Recipe, Ingredient}
   alias EctoShorts.{Actions}
-  alias Recipebook.RecipeViewCounter
+  alias Recipebook.ViewStats.RecipeViewCounter
 
   @recipe_query Recipe.setup_query()
   def all_recipes(params \\ %{}) do
@@ -39,28 +39,31 @@ defmodule Recipebook.Cookbook do
   def update_recipe(user, %{id: id} = params \\ %{}) do
     case Actions.find(@recipe_query, %{id: id, user_id: user.id}) do
       {:ok, _recipe} ->
-      {ingredients, params} = Map.pop(params, :ingredients, [])
-      recipe_ingredients = create_recipe_ingredient_list(ingredients)
-      params = Map.put(params, :recipe_ingredients, recipe_ingredients)
-      Actions.update(Recipe, id, params)
+      Actions.update(Recipe, id, seralizing_ingredients(params))
       {:error, _}  -> {:error, "Recipe do not exist or you do not have permission to edit it"}
     end
   end
 
   def create_recipe(params \\ %{}, user) do
-    {ingredients, params} = Map.pop(params, :ingredients, [])
-    recipe_ingredients = create_recipe_ingredient_list(ingredients)
     params = params
-    |> Map.put(:recipe_ingredients, recipe_ingredients)
+    |> seralizing_ingredients()
     |> Map.put(:user, user)
     Actions.create(Recipe, params)
   end
 
-  def create_recipe_ingredient_list(ingredients) do
+  defp create_recipe_ingredient_list(ingredients) do
     Enum.map(ingredients, fn ingredient -> create_or_find_ingredient(ingredient) end)
   end
 
-  def create_or_find_ingredient(%{name: name} = params) do
+
+  defp seralizing_ingredients(params) do
+    {ingredients, params} = Map.pop(params, :ingredients, [])
+    recipe_ingredients = create_recipe_ingredient_list(ingredients)
+    Map.put(params, :recipe_ingredients, recipe_ingredients)
+  end
+
+
+  defp create_or_find_ingredient(%{name: name} = params) do
     case Actions.find_or_create(Ingredient, %{name: name}) do
       {:ok, ingredient} ->
         params

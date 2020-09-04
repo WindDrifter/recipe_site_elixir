@@ -45,7 +45,7 @@ defmodule Recipebook.AccountTest do
     end
   end
 
-  describe "&follow_user/1" do
+  describe "&follow_user/2" do
     setup [:setup_user]
     test "successfully follow user if user exist" , context do
       user = context[:user]
@@ -56,6 +56,21 @@ defmodule Recipebook.AccountTest do
     test "return error if user does not eixst" , context do
       user = context[:user]
       assert {:error, _} = Account.follow_user( user, %{id: "222244444"})
+    end
+  end
+  describe "&unfollow_user/2" do
+    setup [:setup_user]
+    test "successfully unfollow user if user exist" , context do
+      user = context[:user]
+      assert {:ok, followed_user} = UserSupport.generate_user
+      assert {:ok, followed_user2} = UserSupport.generate_user
+      Account.follow_user(user, %{id: followed_user.id})
+      Account.follow_user(user, %{id: followed_user2.id})
+      assert {:ok, followers} = Account.get_following(%{id: user.id})
+      assert Enum.count(followers) === 2
+      assert {:ok, _} = Account.unfollow_user(user, %{id: followed_user.id})
+      assert {:ok, followers} = Account.get_following(%{id: user.id})
+      assert Enum.count(followers) === 1
     end
   end
   describe "&update_user/3" do
@@ -89,6 +104,17 @@ defmodule Recipebook.AccountTest do
       assert first_user.name !== user.name
     end
   end
+  describe "&get_following/1" do
+    setup [:setup_user_and_following]
+    test "successfully get following and the names", context do
+      user = context[:user]
+      # Generate another bunch and ensure the length is not the same as the first one
+      UserSupport.generate_users_and_following_chef(4)
+      assert {:ok, following} = Account.get_following(%{id: user.id})
+      assert is_list(following)
+      assert Enum.count(following) === 10
+    end
+  end
   describe "&save_recipe/1" do
     setup [:setup_user]
     test "successfully get who the users are following", context do
@@ -100,8 +126,7 @@ defmodule Recipebook.AccountTest do
     test "return error if recipe not found", context do
       user = context[:user]
       assert {:error, message} = Account.save_recipe(user, %{recipe_id: "000011"})
-      assert message =~ "not found"
-
+      assert message =~ "no records found"
     end
   end
   describe "&unsave_recipe/1" do
@@ -111,13 +136,11 @@ defmodule Recipebook.AccountTest do
       {:ok, another_user} = UserSupport.generate_user()
       {:ok, target_recipe} = RecipeSupport.generate_recipe(another_user)
       assert {:ok, _} = Account.save_recipe(user, %{recipe_id: target_recipe.id})
+      assert {:ok, recipes} = Account.get_saved_recipes(user)
+      assert Enum.count(recipes) === 1
       assert {:ok, _} = Account.unsave_recipe(user, %{recipe_id: target_recipe.id})
-    end
-    test "return error if recipe not found", context do
-      user = context[:user]
-      assert {:error, message} = Account.unsave_recipe(user, %{recipe_id: "000011"})
-      assert message =~ "no records found"
-
+      assert {:ok, recipes} = Account.get_saved_recipes(user)
+      assert Enum.count(recipes) === 0
     end
   end
   describe "&get_saved_recipes/1" do

@@ -3,7 +3,7 @@ defmodule RecipebookWeb.Schema.Queries.StatTest do
   use ExUnit.Case, async: true
 
   alias RecipebookWeb.Schema
-  alias Recipebook.RecipeViewCounter
+  alias Recipebook.ViewStats.RecipeViewCounter
   alias Recipebook.Support.StatSupport
 
   setup_all do

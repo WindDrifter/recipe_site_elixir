@@ -2,7 +2,7 @@ defmodule Recipebook.Account.User do
   import Argon2
   import Ecto.{Changeset, Query}
   alias EctoShorts.CommonChanges
-  alias Recipebook.Account.{User, SavedRecipe, FollowingUser}
+  alias Recipebook.Account.{User}
   alias Recipebook.Cookbook.Recipe
 
   use Ecto.Schema
@@ -12,9 +12,9 @@ defmodule Recipebook.Account.User do
     field :password, :string
     field :username, :string
     has_many :recipes, Recipe
-    many_to_many :following, User, join_through: FollowingUser, join_keys: [user_id: :id, following_user_id: :id]
-    many_to_many :followers, User, join_through: FollowingUser, join_keys: [following_user_id: :id, user_id: :id]
-    many_to_many :saved_recipes, Recipe, join_through: SavedRecipe
+    many_to_many :following, User, join_through: "following_users", join_keys: [user_id: :id, following_user_id: :id], on_replace: :delete
+    many_to_many :followers, User, join_through: "following_users", join_keys: [following_user_id: :id, user_id: :id]
+    many_to_many :saved_recipes, Recipe, join_through: "saved_recipes", on_replace: :delete
     timestamps()
   end
 
@@ -43,10 +43,10 @@ defmodule Recipebook.Account.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, @available_fields)
+    |> validate_required(@required_fields)
     |> CommonChanges.preload_change_assoc(:followers)
     |> CommonChanges.preload_change_assoc(:following)
     |> CommonChanges.preload_change_assoc(:saved_recipes)
-    |> validate_required(@required_fields)
     |> put_pass_hash
     |> unique_constraint(:email)
     |> unique_constraint(:username)
