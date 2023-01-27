@@ -3,6 +3,7 @@
 Require docker compose installed
 
 To start your Phoenix server:
+  * If using asdf run `asdf install` at root folder first
   * Run docker compose via `docker compose up -d`
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.setup`
