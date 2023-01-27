@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Configure your database
 #
@@ -6,10 +6,12 @@ use Mix.Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :recipebook, Recipebook.Repo,
-  username: "ryan",
-  password: "testing",
-  database: "recipebook_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "recipebook_test_dev",
+  username: "postgres",
+  password: "postgres",
   hostname: "localhost",
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true,
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
@@ -17,6 +19,10 @@ config :recipebook, Recipebook.Repo,
 config :recipebook, RecipebookWeb.Endpoint,
   http: [port: 4002],
   server: false
+
+config :ecto_shorts,
+  repo: Recipebook.Repo,
+  error_module: EctoShorts.Actions.Error
 
 # Print only warnings and errors during test
 config :logger, level: :warn

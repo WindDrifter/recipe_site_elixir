@@ -12,22 +12,20 @@ defmodule RecipebookWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
   end
+
   pipeline :graphql do
     plug RecipebookWeb.Context
-   end
+  end
 
   scope "/" do
     pipe_through :graphql
-    forward "/graphql", Absinthe.Plug,
-      schema: RecipebookWeb.Schema
+    forward "/graphql", Absinthe.Plug, schema: RecipebookWeb.Schema
 
     forward "/graphiql", Absinthe.Plug.GraphiQL,
       schema: RecipebookWeb.Schema,
       socket: RecipebookWeb.UserSocket,
       interface: :playground
-
   end
-
 
   # Other scopes may use custom stacks.
   # scope "/api", RecipebookWeb do

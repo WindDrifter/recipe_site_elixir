@@ -20,5 +20,4 @@ defmodule RecipebookWeb.Resolvers.Stat do
   def find_by_categories(%{categories: categories}, _) do
     RecipeViewStats.get_certain_categories_stats(categories)
   end
-
 end

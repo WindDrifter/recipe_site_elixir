@@ -5,7 +5,14 @@
 # is restricted to this project.
 
 # General application configuration
-use Mix.Config
+import Config
+
+config :recipebook, Recipebook.Repo,
+  database: "recipebook_repo",
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox
 
 config :recipebook,
   ecto_repos: [Recipebook.Repo]
@@ -26,6 +33,7 @@ config :recipebook, Recipebook.Authentication,
 config :ecto_shorts,
   repo: Recipebook.Repo,
   error_module: EctoShorts.Actions.Error
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

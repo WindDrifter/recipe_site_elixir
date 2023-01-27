@@ -5,7 +5,7 @@ defmodule Recipebook.Repo.Migrations.StepsAddNumberColumn do
     alter table("recipe_steps") do
       add :number, :integer
     end
-    create index(:recipe_steps, [:number])
 
+    create index(:recipe_steps, [:number])
   end
 end

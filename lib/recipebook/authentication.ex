@@ -17,14 +17,14 @@ defmodule Recipebook.Authentication do
       {:ok, %{token: jwt}}
     else
       {:error, _reason} ->
-        {:error, "Wrong password or invalid username"}
+        {:error, ErrorMessage.unauthorized("Wrong password or invalid username")}
     end
   end
+
   def verify_user(%{password: input_password, username: input_username} = _params) do
     case Account.find_user(%{username: input_username}) do
       {:ok, user} -> check_pass(user, input_password, hash_key: :password)
       {:error, reason} -> {:error, reason}
     end
   end
-
- end
+end

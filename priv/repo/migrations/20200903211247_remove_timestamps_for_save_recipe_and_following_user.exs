@@ -6,6 +6,7 @@ defmodule Recipebook.Repo.Migrations.RemoveTimestampsForSaveRecipeAndFollowingUs
       remove :inserted_at
       remove :updated_at
     end
+
     alter table(:saved_recipes) do
       remove :inserted_at
       remove :updated_at

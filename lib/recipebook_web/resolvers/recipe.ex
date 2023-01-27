@@ -1,11 +1,12 @@
 defmodule RecipebookWeb.Resolvers.Recipe do
   alias Recipebook.Cookbook
+
   def all(params, _) do
     Cookbook.all_recipes(params)
   end
 
   def find(params, _) when params == %{} do
-    {:error, "must enter at least one params"}
+    {:error, ErrorMessage.bad_request("must enter at least one params")}
   end
 
   def find(params, _) do
@@ -22,11 +23,10 @@ defmodule RecipebookWeb.Resolvers.Recipe do
   end
 
   def create_recipe_topic(args, _) do
-    {:ok, topic: args.user_ids }
+    {:ok, topic: args.user_ids}
   end
 
   defp serialized_params(%{id: id} = params) do
     Map.put(params, :id, String.to_integer(id))
   end
-
 end

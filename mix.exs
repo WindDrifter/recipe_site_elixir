@@ -5,9 +5,9 @@ defmodule Recipebook.MixProject do
     [
       app: :recipebook,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:phoenix | Mix.compilers()],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -33,27 +33,29 @@ defmodule Recipebook.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.3"},
+      {:phoenix, "~> 1.6.3"},
       {:phoenix_ecto, "~> 4.1"},
       {:ecto_sql, "~> 3.4"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.2.0"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_reload, "~> 1.4", only: :dev},
+      {:phoenix_live_dashboard, "~> 0.7.0"},
       {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
+      {:credo, ">= 0.0.0"},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_pubsub, "~> 2.0"},
-      {:absinthe, "~> 1.5.1"},
-      {:absinthe_plug, "~> 1.5"},
+      {:absinthe, "~> 1.7.0"},
+      {:absinthe_plug, "~> 1.5.8"},
       {:absinthe_phoenix, "~> 2.0"},
       {:dataloader, "~> 1.0"},
-      {:ecto_shorts, ">= 0.0.0"},
-      {:argon2_elixir, "~> 2.3"},
-      {:guardian, "~> 2.0"},
-      {:faker, "~> 0.14", only: :test}
+      {:ecto_shorts, "~> 2.2.3"},
+      {:argon2_elixir, "~> 3.0"},
+      {:guardian, "~> 2.3"},
+      {:faker, ">= 0.0.0", only: :test}
     ]
   end
 

@@ -5,5 +5,4 @@ defmodule RecipebookWeb.Types.Session do
     field :username, :string
     field :token, :string
   end
-
 end

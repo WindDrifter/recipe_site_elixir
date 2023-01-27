@@ -3,6 +3,7 @@ defmodule Recipebook.Cookbook.Recipe do
   import Ecto.{Changeset, Query}
   alias EctoShorts.CommonChanges
   alias Recipebook.Cookbook.{Recipe, RecipeStep, RecipeIngredient, Ingredient}
+
   schema "recipes" do
     field :intro, :string
     field :name, :string
@@ -32,7 +33,6 @@ defmodule Recipebook.Cookbook.Recipe do
     |> join(:inner, [r], u in assoc(r, :user), as: :user)
     |> join(:inner, [r], i in assoc(r, :ingredients), as: :ingredients)
     |> group_by([r], r.id)
-
   end
 
   def setup_query() do
@@ -52,6 +52,7 @@ defmodule Recipebook.Cookbook.Recipe do
     search = "%#{ingredient_name}%"
     or_where(query, [ingredients: i], ilike(i.name, ^search))
   end
+
   @doc false
   def changeset(recipe, attrs) do
     recipe

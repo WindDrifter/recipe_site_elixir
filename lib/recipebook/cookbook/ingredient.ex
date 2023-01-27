@@ -9,6 +9,7 @@ defmodule Recipebook.Cookbook.Ingredient do
     field :info, :string
     field :name, :string
     field :wiki_url, :string
+
     # many_to_many :recipes, Recipebook.Cookbook.Recipe, join_through: Recipebook.Cookbook.RecipeIngredient
     has_many :recipe_ingredients, Recipebook.Cookbook.RecipeIngredient
 
@@ -27,7 +28,10 @@ defmodule Recipebook.Cookbook.Ingredient do
 
   def join_with_recipe(query \\ setup_query()) do
     query
-    |> join(:inner, [i], ri in assoc(i, :recipe_ingredients), on: i.id == ri.ingredient_id, as: :recipe_ingredients)
+    |> join(:inner, [i], ri in assoc(i, :recipe_ingredients),
+      on: i.id == ri.ingredient_id,
+      as: :recipe_ingredients
+    )
     # |> join(:inner, [recipe_ingredients: ri], r in assoc(ri, :recipe), as: :recipe)
     |> select([recipe_ingredients: ri], ri.recipe_id)
   end
@@ -36,6 +40,7 @@ defmodule Recipebook.Cookbook.Ingredient do
     search = "%#{ingredient_name}%"
     or_where(query, [i], ilike(i.name, ^search))
   end
+
   @doc false
   def changeset(ingredients, attrs) do
     ingredients

@@ -1,5 +1,6 @@
 defmodule RecipebookWeb.Types.User do
   use Absinthe.Schema.Notation
+
   object :user do
     field :id, :id
     field :username, :string
@@ -12,5 +13,4 @@ defmodule RecipebookWeb.Types.User do
     field :name, :string
     field :username, :string
   end
-
 end

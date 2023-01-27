@@ -3,6 +3,7 @@ defmodule Recipebook.Cookbook.RecipeIngredient do
   import Ecto.Changeset
   alias EctoShorts.CommonChanges
   alias Recipebook.Cookbook.{Recipe, Ingredient}
+
   schema "recipe_ingredients" do
     field :amount, :integer
     field :unit, :string
@@ -16,6 +17,7 @@ defmodule Recipebook.Cookbook.RecipeIngredient do
   def create_changeset(params) do
     changeset(%Recipebook.Cookbook.RecipeIngredient{}, params)
   end
+
   @doc false
   def changeset(ingredient, attrs) do
     ingredient

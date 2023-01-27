@@ -1,11 +1,13 @@
-use Mix.Config
+import Config
 
 # Configure your database
+
 config :recipebook, Recipebook.Repo,
-  username: "ryan",
-  password: "testing",
-  database: "recipebook_dev",
+  database: "recipebook_repo_dev",
+  username: "postgres",
+  password: "postgres",
   hostname: "localhost",
+  stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 

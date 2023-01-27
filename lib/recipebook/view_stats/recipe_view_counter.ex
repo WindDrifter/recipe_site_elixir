@@ -25,15 +25,19 @@ defmodule Recipebook.ViewStats.RecipeViewCounter do
   end
 
   def increment_by_one(name \\ @default_name, key) do
-    Agent.update(name, fn state -> Recipebook.ViewStats.RecipeViewCounterImpl.add_one_view(state, key) end)
+    Agent.update(name, fn state ->
+      Recipebook.ViewStats.RecipeViewCounterImpl.add_one_view(state, key)
+    end)
   end
 
   def get_current_state_by_key(name \\ @default_name, key) do
-    Agent.get(name, fn state -> {:ok,  Map.get(state, key, 0)} end)
+    Agent.get(name, fn state -> {:ok, Map.get(state, key, 0)} end)
   end
 
   def get_top(name \\ @default_name, amount) do
-    Agent.get(name, fn state -> {:ok, Recipebook.ViewStats.RecipeViewCounterImpl.get_top_n_with_most_views(state, amount)} end)
+    Agent.get(name, fn state ->
+      {:ok, Recipebook.ViewStats.RecipeViewCounterImpl.get_top_n_with_most_views(state, amount)}
+    end)
   end
 
   def get_current_state(name \\ @default_name) do
@@ -43,5 +47,4 @@ defmodule Recipebook.ViewStats.RecipeViewCounter do
   def erase_state(name \\ @default_name) do
     Agent.update(name, fn _state -> %{} end)
   end
-
 end

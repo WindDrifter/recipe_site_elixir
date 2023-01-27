@@ -12,12 +12,13 @@ defmodule RecipebookWeb.Context do
 
   def build_context(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-    {:ok, current_user} <- authorize(token) do
+         {:ok, current_user} <- authorize(token) do
       %{current_user: current_user}
     else
       _ -> %{}
     end
   end
+
   defp authorize(token) do
     with {:ok, decoded_token} <- Authentication.decode_and_verify(token) do
       Account.find_user(%{id: decoded_token["sub"]})
@@ -25,5 +26,4 @@ defmodule RecipebookWeb.Context do
       _ -> {:error, "Invalid token"}
     end
   end
-
 end

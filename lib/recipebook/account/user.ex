@@ -6,14 +6,23 @@ defmodule Recipebook.Account.User do
   alias Recipebook.Cookbook.Recipe
 
   use Ecto.Schema
+
   schema "users" do
     field :email, :string
     field :name, :string
     field :password, :string
     field :username, :string
     has_many :recipes, Recipe
-    many_to_many :following, User, join_through: "following_users", join_keys: [user_id: :id, following_user_id: :id], on_replace: :delete
-    many_to_many :followers, User, join_through: "following_users", join_keys: [following_user_id: :id, user_id: :id]
+
+    many_to_many :following, User,
+      join_through: "following_users",
+      join_keys: [user_id: :id, following_user_id: :id],
+      on_replace: :delete
+
+    many_to_many :followers, User,
+      join_through: "following_users",
+      join_keys: [following_user_id: :id, user_id: :id]
+
     many_to_many :saved_recipes, Recipe, join_through: "saved_recipes", on_replace: :delete
     timestamps()
   end
@@ -52,14 +61,12 @@ defmodule Recipebook.Account.User do
     |> unique_constraint(:username)
   end
 
-  defp put_pass_hash(%Ecto.Changeset{changes:
-    %{password: password}} = changeset) do
+  defp put_pass_hash(%Ecto.Changeset{changes: %{password: password}} = changeset) do
     change(changeset, add_hash(password, hash_key: :password))
   end
 
   # For when password parameter does not exist
-  defp put_pass_hash(%Ecto.Changeset{changes:
-  %{}} = changeset) do
-  changeset
-end
+  defp put_pass_hash(%Ecto.Changeset{changes: %{}} = changeset) do
+    changeset
+  end
 end

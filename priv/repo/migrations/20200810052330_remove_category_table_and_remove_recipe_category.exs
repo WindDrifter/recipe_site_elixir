@@ -5,6 +5,7 @@ defmodule Recipebook.Repo.Migrations.RemoveCategoryTableAndRemoveRecipeCategory 
     alter table(:recipes) do
       add :categories, {:array, :citext}
     end
+
     drop table(:recipe_categories)
     drop table(:categories)
   end
